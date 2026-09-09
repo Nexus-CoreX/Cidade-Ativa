@@ -16,7 +16,7 @@ Por meio do Cidade Ativa, o cidadão poderá registrar um problema utilizando:
 
 Após o envio, a ocorrência poderá ser analisada pela prefeitura, que acompanhará o problema e atualizará seu andamento até a resolução.
 
-O projeto também propõe o uso de **Inteligência Artificial** para auxiliar na identificação e classificação das ocorrências, além de um **mapa da cidade** para visualizar os problemas registrados.
+
 
 ## 🎯 Objetivo
 
