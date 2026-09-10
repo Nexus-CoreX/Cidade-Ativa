@@ -56,27 +56,6 @@ A plataforma busca facilitar:
 * 🔄 O acompanhamento das solicitações;
 * ✅ O controle da resolução das ocorrências.
 
----
-
-## 🗺️ Diferencial do projeto
-
-Um dos principais diferenciais do **Cidade Ativa** será a utilização de um **mapa interativo da cidade**.
-
-Através dele, será possível visualizar onde as ocorrências foram registradas, facilitando a identificação de regiões que apresentam maior concentração de problemas urbanos.
-
-```text
-                🗺️ MAPA DA CIDADE
-
-        🔴          🟡
-             🔵
-   🟢                    🔴
-
-          🟡       🔴
-
-   🔵              🟢
-```
-
-Essa visualização poderá auxiliar tanto os cidadãos quanto os órgãos públicos na identificação das necessidades da cidade.
 
 ---
 
