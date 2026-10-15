@@ -85,21 +85,54 @@ A plataforma busca facilitar:
 
 ---
 
-## 🛠️ Stack
+🛠️ Tecnologias utilizadas
 
-> 🚧 **Em definição**
+Tecnologia
 
-As tecnologias utilizadas no desenvolvimento ainda estão sendo definidas.
+Finalidade
 
-Esta seção será atualizada posteriormente com informações sobre:
+HTML5
 
-* 📱 Frontend / Mobile
-* ⚙️ Backend
-* 🗄️ Banco de dados
-* ☁️ Serviços e APIs
-* 🗺️ Integração com mapas
+Estrutura das páginas
 
----
+CSS3
+
+Estilização e organização visual da interface
+
+JavaScript
+
+Funcionalidades e interatividade da aplicação
+
+Supabase
+
+Banco de dados e autenticação
+
+Chart.js
+
+Criação de gráficos e indicadores
+
+Git
+
+Controle de versão do código
+
+GitHub
+
+Hospedagem do repositório e versionamento do projeto
+
+
+## 📈 Relatórios e indicadores
+
+O painel administrativo disponibiliza recursos para acompanhar os registros e visualizar informações relevantes sobre as ocorrências, incluindo:
+
+Distribuição das ocorrências por status.
+
+Distribuição das ocorrências por categoria.
+
+Quantidade de registros por mês.
+
+Exportação dos dados para análise externa.
+
+Esses recursos contribuem para uma visão mais organizada dos problemas registrados e podem auxiliar na identificação de demandas prioritárias.
 
 ## 🚀 Como rodar o projeto
 
@@ -120,6 +153,11 @@ As instruções de instalação e execução serão adicionadas após a definiç
 | **Leonardo da Silva Faustino**   | 249211 |
 
 ---
+## 🌱 Impacto esperado
+
+O Cidade Ativa busca contribuir para a transformação digital da gestão urbana, tornando o registro de problemas mais organizado e facilitando o acompanhamento das demandas da população.
+
+A proposta é utilizar a tecnologia para aproximar cidadãos e administração pública, promovendo mais transparência, organização e eficiência na gestão das ocorrências.
 
 <div align="center">
 
