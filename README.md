@@ -2,162 +2,182 @@
 
 > **Problemas da cidade, soluções mais ativas.**
 
-O **Cidade Ativa** é um aplicativo mobile desenvolvido para aproximar **cidadãos e órgãos públicos**, permitindo registrar e acompanhar problemas urbanos de forma **simples, rápida e transparente**.
-
----
+O **Cidade Ativa** é uma aplicação web desenvolvida com o objetivo de aproximar cidadãos e órgãos públicos, facilitando o registro e o acompanhamento de problemas urbanos de forma simples, organizada e transparente.
 
 ## 📋 Sobre o projeto
 
-Problemas como **buracos nas ruas, iluminação pública, descarte irregular de lixo e sinalização danificada** fazem parte do cotidiano das cidades.
+Problemas como buracos nas ruas, iluminação pública deficiente, descarte irregular de lixo e sinalização danificada fazem parte do cotidiano das cidades.
 
-Muitas vezes, porém, o cidadão encontra dificuldades para:
-
-* 📍 Registrar a ocorrência;
-* 📸 Enviar evidências do problema;
-* 📝 Descrever a situação;
-* 🔎 Acompanhar o andamento da solicitação.
-
-O **Cidade Ativa** surge como uma solução digital para centralizar esse processo e facilitar a comunicação entre a população e a prefeitura.
+O Cidade Ativa propõe uma solução digital para centralizar o registro dessas ocorrências, permitindo que os cidadãos informem os problemas encontrados e que os responsáveis acompanhem seu andamento.
 
 ### 💡 Como funciona?
 
-O cidadão poderá registrar uma ocorrência informando:
+O usuário pode registrar uma ocorrência informando:
 
-| Recurso            | Descrição                            |
-| ------------------ | ------------------------------------ |
-| 📸 **Foto**        | Imagem do problema encontrado        |
-| 📍 **Localização** | Localização automática da ocorrência |
-| 📝 **Descrição**   | Detalhes sobre o problema            |
+- 📍 **Localização:** identificação do local do problema no mapa.
+- 📝 **Descrição:** informações sobre a situação encontrada.
+- 🏷️ **Categoria:** classificação do tipo de ocorrência.
+- 🔄 **Status:** acompanhamento do andamento da solicitação.
 
-Após o envio, a ocorrência poderá ser analisada pelo órgão responsável e terá seu **status atualizado até a resolução**.
-
----
+Os dados são armazenados no banco de dados Supabase, possibilitando a consulta e o gerenciamento das ocorrências cadastradas.
 
 ## 🎯 Objetivos
 
 ### 👤 Para o cidadão
 
-O aplicativo permitirá:
+- Registrar problemas urbanos.
+- Informar a localização da ocorrência.
+- Descrever a situação encontrada.
+- Visualizar ocorrências cadastradas no mapa.
+- Facilitar o acompanhamento das solicitações.
 
-* 📸 Registrar problemas com fotos;
-* 📍 Informar automaticamente a localização;
-* 📝 Adicionar uma descrição;
-* 📤 Enviar ocorrências;
-* 🔎 Acompanhar o andamento;
-* 🗺️ Visualizar ocorrências no mapa.
+### 🏛️ Para a administração pública
 
-### 🏛️ Para a prefeitura
+- Centralizar o registro das ocorrências.
+- Consultar problemas cadastrados.
+- Visualizar a distribuição das ocorrências.
+- Atualizar o status das solicitações.
+- Utilizar indicadores para auxiliar na análise das demandas.
 
-A plataforma busca facilitar:
+## ⚙️ Funcionalidades
 
-* 📋 O gerenciamento das ocorrências;
-* 🗺️ A visualização dos problemas no mapa;
-* 📊 A identificação de regiões com maior concentração de problemas;
-* 🔄 O acompanhamento das solicitações;
-* ✅ O controle da resolução das ocorrências.
+### Cadastro de ocorrências
 
+O usuário pode informar a categoria, a descrição e a localização do problema. Após o envio, os dados são armazenados na tabela `ocorrencias` do Supabase.
 
----
+### Visualização no mapa
+
+A aplicação permite trabalhar com a localização geográfica das ocorrências, facilitando a identificação dos locais que precisam de atenção.
+
+### Painel administrativo
+
+O projeto conta com desenvolvimento de recursos administrativos para consultar e gerenciar os registros, incluindo:
+
+- Listagem e pesquisa de ocorrências.
+- Filtros por status.
+- Atualização do status dos registros.
+- Indicadores e gráficos estatísticos.
+- Exportação dos dados em CSV.
+
+**Observação:** a disponibilidade dessas funcionalidades depende dos arquivos e da versão efetivamente publicados no repositório.
 
 ## 🔄 Fluxo da aplicação
 
 ```text
 👤 Cidadão
-     │
-     ▼
-📸 Registra ocorrência
-     │
-     ▼
-📍 Localização + 📝 Descrição
-     │
-     ▼
-📤 Envio da solicitação
-     │
-     ▼
-🏛️ Análise da prefeitura
-     │
-     ▼
+     |
+     v
+📝 Cadastro da ocorrência
+     |
+     v
+📍 Informações do local
+     |
+     v
+🗄️ Armazenamento no Supabase
+     |
+     v
+🗺️ Consulta das ocorrências
+     |
+     v
+🏛️ Gerenciamento administrativo
+     |
+     v
 🔄 Atualização do status
-     │
-     ▼
-✅ Problema resolvido
+     |
+     v
+✅ Acompanhamento da resolução
 ```
 
----
+## 🛠️ Tecnologias utilizadas
 
-🛠️ Tecnologias utilizadas
-
-Tecnologia
-
-Finalidade
-
-HTML5
-
-Estrutura das páginas
-
-CSS3
-
-Estilização e organização visual da interface
-
-JavaScript
-
-Funcionalidades e interatividade da aplicação
-
-Supabase
-
-Banco de dados e autenticação
-
-Chart.js
-
-Criação de gráficos e indicadores
-
-Git
-
-Controle de versão do código
-
-GitHub
-
-Hospedagem do repositório e versionamento do projeto
-
+| Tecnologia | Finalidade |
+|---|---|
+| HTML5 | Estrutura das páginas da aplicação |
+| CSS3 | Estilização e organização visual da interface |
+| JavaScript | Funcionalidades e interatividade |
+| Supabase | Banco de dados e autenticação |
+| Chart.js | Criação de gráficos e indicadores |
+| Git | Controle de versão do código |
+| GitHub | Hospedagem e gerenciamento do repositório |
 
 ## 📈 Relatórios e indicadores
 
-O painel administrativo disponibiliza recursos para acompanhar os registros e visualizar informações relevantes sobre as ocorrências, incluindo:
+O painel administrativo possui recursos para apoiar a análise das ocorrências, como:
 
-Distribuição das ocorrências por status.
+- Distribuição dos registros por status.
+- Distribuição das ocorrências por categoria.
+- Quantidade de registros por mês.
+- Exportação de dados para análise externa.
 
-Distribuição das ocorrências por categoria.
+Esses recursos ajudam a organizar as informações e podem contribuir para a identificação de demandas prioritárias.
 
-Quantidade de registros por mês.
+## 🚀 Como executar o projeto
 
-Exportação dos dados para análise externa.
+### Pré-requisitos
 
-Esses recursos contribuem para uma visão mais organizada dos problemas registrados e podem auxiliar na identificação de demandas prioritárias.
+- Navegador atualizado, como Google Chrome ou Microsoft Edge.
+- Acesso aos arquivos do projeto.
+- Configuração do projeto no Supabase para utilizar os recursos que dependem do banco de dados.
 
-## 🚀 Como rodar o projeto
+### Passos para execução
 
-> 🚧 **Em desenvolvimento**
+1. Acesse o repositório: [Cidade Ativa — GitHub](https://github.com/Nexus-CoreX/Cidade-Ativa).
+2. Faça o download do projeto ou clone o repositório.
+3. Abra a pasta do projeto no Visual Studio Code.
+4. Abra o arquivo `index.html` utilizando uma extensão de servidor local, como **Live Server**.
+5. Para utilizar as funcionalidades integradas ao Supabase, confira se as configurações de conexão e as permissões do banco de dados estão corretas.
 
-As instruções de instalação e execução serão adicionadas após a definição da stack tecnológica.
+**Importante:** mantenha as credenciais administrativas e as chaves secretas fora do repositório público. Utilize apenas chaves apropriadas para o cliente e configure corretamente as políticas de segurança do Supabase.
 
----
+## 📁 Estrutura do projeto
 
-## 👥 Equipe
+A estrutura abaixo representa a organização esperada dos principais arquivos. Ajuste-a caso os nomes ou as pastas do repositório sejam diferentes.
 
-| Nome                             |     RA |
-| -------------------------------- | -----: |
-| **Carlos Eduardo Fernandes**     | 264642 |
-| **Eduardo Duarte Minutti Filho** | 248116 |
-| **Kaike Rafael Figueiredo**      | 248984 |
-| **Larissa Trombini**             | 248448 |
-| **Leonardo da Silva Faustino**   | 249211 |
+```text
+Cidade-Ativa/
+├── index.html
+├── style.css
+├── script.js
+├── admin/
+│   ├── admin.html
+│   ├── style.css
+│   └── script.js
+├── package.json
+└── README.md
+```
 
----
+- `index.html`: página principal da aplicação.
+- `style.css`: estilos da interface principal.
+- `script.js`: funcionalidades da página principal e integração com o Supabase.
+- `admin/`: arquivos da interface administrativa, caso publicados nessa pasta.
+- `package.json`: configurações e dependências do projeto, quando aplicáveis.
+- `README.md`: documentação do projeto.
+
 ## 🌱 Impacto esperado
 
 O Cidade Ativa busca contribuir para a transformação digital da gestão urbana, tornando o registro de problemas mais organizado e facilitando o acompanhamento das demandas da população.
 
-A proposta é utilizar a tecnologia para aproximar cidadãos e administração pública, promovendo mais transparência, organização e eficiência na gestão das ocorrências.
+A proposta é utilizar a tecnologia para aproximar cidadãos e administração pública, promovendo transparência, organização e eficiência na gestão das ocorrências.
+
+## 👥 Equipe
+
+| Integrante |
+|---|
+| Carlos Eduardo Fernandes |
+| Eduardo Duarte Minutti Filho |
+| Kaike Rafael Figueiredo |
+| Larissa Trombini |
+| Leonardo da Silva Faustino |
+
+## 📌 Repositório
+
+Código-fonte e histórico de desenvolvimento:
+
+[https://github.com/Nexus-CoreX/Cidade-Ativa](https://github.com/Nexus-CoreX/Cidade-Ativa)
+
+O projeto utiliza Git e GitHub para registrar a evolução do código e manter o histórico de alterações.
+
+---
 
 <div align="center">
 
