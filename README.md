@@ -127,27 +127,30 @@ As instruções de instalação e execução serão adicionadas após a definiç
 
 ## 📁 Estrutura do projeto
 
-A estrutura abaixo representa a organização esperada dos principais arquivos. Ajuste-a caso os nomes ou as pastas do repositório sejam diferentes.
+O projeto Cidade Ativa está organizado em arquivos responsáveis pela interface principal, pelas funcionalidades da aplicação e pelo painel administrativo.
 
 ```text
 Cidade-Ativa/
 ├── index.html
 ├── style.css
 ├── script.js
-├── admin/
-│   ├── admin.html
-│   ├── style.css
-│   └── script.js
+├── admin.html
 ├── package.json
 └── README.md
 ```
 
-- `index.html`: página principal da aplicação.
-- `style.css`: estilos da interface principal.
-- `script.js`: funcionalidades da página principal e integração com o Supabase.
-- `admin/`: arquivos da interface administrativa, caso publicados nessa pasta.
-- `package.json`: configurações e dependências do projeto, quando aplicáveis.
-- `README.md`: documentação do projeto.
+### 📄 Descrição dos arquivos
+
+| Arquivo | Descrição |
+|---|---|
+| `index.html` | Página principal da aplicação para o registro de ocorrências urbanas. |
+| `style.css` | Define os estilos visuais e a organização da interface principal. |
+| `script.js` | Implementa as funcionalidades da página principal e a integração com o Supabase. |
+| `admin.html` | Página do painel administrativo para consulta e gerenciamento das ocorrências. |
+| `package.json` | Arquivo de configuração e dependências do projeto, quando aplicável. |
+| `README.md` | Documentação do projeto, com informações sobre seus objetivos, tecnologias e funcionalidades. |
+
+
 
 ## 🌱 Impacto esperado
 
