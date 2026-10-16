@@ -119,15 +119,11 @@ Esses recursos ajudam a organizar as informações e podem contribuir para a ide
 - Acesso aos arquivos do projeto.
 - Configuração do projeto no Supabase para utilizar os recursos que dependem do banco de dados.
 
-### Passos para execução
+> 🚧 **Em desenvolvimento**
 
-1. Acesse o repositório: [Cidade Ativa — GitHub](https://github.com/Nexus-CoreX/Cidade-Ativa).
-2. Faça o download do projeto ou clone o repositório.
-3. Abra a pasta do projeto no Visual Studio Code.
-4. Abra o arquivo `index.html` utilizando uma extensão de servidor local, como **Live Server**.
-5. Para utilizar as funcionalidades integradas ao Supabase, confira se as configurações de conexão e as permissões do banco de dados estão corretas.
+As instruções de instalação e execução serão adicionadas após a definição da stack tecnológica.
 
-**Importante:** mantenha as credenciais administrativas e as chaves secretas fora do repositório público. Utilize apenas chaves apropriadas para o cliente e configure corretamente as políticas de segurança do Supabase.
+---
 
 ## 📁 Estrutura do projeto
 
@@ -169,15 +165,6 @@ A proposta é utilizar a tecnologia para aproximar cidadãos e administração p
 | Larissa Trombini |
 | Leonardo da Silva Faustino |
 
-## 📌 Repositório
-
-Código-fonte e histórico de desenvolvimento:
-
-[https://github.com/Nexus-CoreX/Cidade-Ativa](https://github.com/Nexus-CoreX/Cidade-Ativa)
-
-O projeto utiliza Git e GitHub para registrar a evolução do código e manter o histórico de alterações.
-
----
 
 <div align="center">
 
