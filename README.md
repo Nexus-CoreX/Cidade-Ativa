@@ -160,13 +160,15 @@ A proposta é utilizar a tecnologia para aproximar cidadãos e administração p
 
 ## 👥 Equipe
 
-| Integrante |
-|---|
-| Carlos Eduardo Fernandes |
-| Eduardo Duarte Minutti Filho |
-| Kaike Rafael Figueiredo |
-| Larissa Trombini |
-| Leonardo da Silva Faustino |
+| Nome                             |     RA |
+| -------------------------------- | -----: |
+| **Carlos Eduardo Fernandes**     | 264642 |
+| **Eduardo Duarte Minutti Filho** | 248116 |
+| **Kaike Rafael Figueiredo**      | 248984 |
+| **Larissa Trombini**             | 248448 |
+| **Leonardo da Silva Faustino**   | 249211 |
+
+---
 
 
 <div align="center">
