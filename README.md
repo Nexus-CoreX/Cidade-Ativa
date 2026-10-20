@@ -90,15 +90,8 @@ O projeto conta com desenvolvimento de recursos administrativos para consultar e
 
 ## 🛠️ Tecnologias utilizadas
 
-| Tecnologia | Finalidade |
-|---|---|
-| HTML5 | Estrutura das páginas da aplicação |
-| CSS3 | Estilização e organização visual da interface |
-| JavaScript | Funcionalidades e interatividade |
-| Supabase | Banco de dados e autenticação |
-| Chart.js | Criação de gráficos e indicadores |
-| Git | Controle de versão do código |
-| GitHub | Hospedagem e gerenciamento do repositório |
+> 🚧 **Em desenvolvimento**
+
 
 ## 📈 Relatórios e indicadores
 
@@ -129,26 +122,12 @@ As instruções de instalação e execução serão adicionadas após a definiç
 
 O projeto Cidade Ativa está organizado em arquivos responsáveis pela interface principal, pelas funcionalidades da aplicação e pelo painel administrativo.
 
-```text
-Cidade-Ativa/
-├── index.html
-├── style.css
-├── script.js
-├── admin.html
-├── package.json
-└── README.md
-```
+> 🚧 **Em desenvolvimento**
+
 
 ### 📄 Descrição dos arquivos
 
-| Arquivo | Descrição |
-|---|---|
-| `index.html` | Página principal da aplicação para o registro de ocorrências urbanas. |
-| `style.css` | Define os estilos visuais e a organização da interface principal. |
-| `script.js` | Implementa as funcionalidades da página principal e a integração com o Supabase. |
-| `admin.html` | Página do painel administrativo para consulta e gerenciamento das ocorrências. |
-| `package.json` | Arquivo de configuração e dependências do projeto, quando aplicável. |
-| `README.md` | Documentação do projeto, com informações sobre seus objetivos, tecnologias e funcionalidades. |
+> 🚧 **Em desenvolvimento**
 
 
 
