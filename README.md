@@ -19,7 +19,7 @@ O usuário pode registrar uma ocorrência informando:
 - 🏷️ **Categoria:** classificação do tipo de ocorrência.
 - 🔄 **Status:** acompanhamento do andamento da solicitação.
 
-Os dados são armazenados no banco de dados Supabase, possibilitando a consulta e o gerenciamento das ocorrências cadastradas.
+Os dados são armazenados no banco de dados, possibilitando a consulta e o gerenciamento das ocorrências cadastradas.
 
 ## 🎯 Objetivos
 
