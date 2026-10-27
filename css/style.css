@@ -1,0 +1,66 @@
+:root{--cor:#0f766e;--cor2:#115e59;--fundo:#f1f5f9;--borda:#e2e8f0;--texto:#0f172a;--suave:#64748b}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--fundo);color:var(--texto)}
+h1,h2{margin:0}h2{font-size:1.1rem}
+.topo{background:var(--cor);color:#fff;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.topo h1{font-size:1.25rem}.pref .topo{background:#1e293b}.pref{--cor:#2563eb}
+.usuario{display:flex;align-items:center;gap:14px}
+main{max-width:860px;margin:24px auto;padding:0 16px}main.largo{max-width:1200px}
+.card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 1px 3px rgba(15,23,42,.08)}
+label{display:block;font-weight:600;font-size:.88rem;margin-bottom:14px}
+input,textarea,select{display:block;width:100%;margin-top:5px;padding:10px 12px;border:1px solid var(--borda);border-radius:10px;font:inherit;background:#fff}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--cor);border-color:transparent}
+.btn,.btn-sec,.btn-ghost{border:0;border-radius:10px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer}
+.btn{background:var(--cor);color:#fff}.btn:hover{filter:brightness(1.1)}
+.btn-sec{background:#e2e8f0;color:var(--texto)}.btn-ghost{background:rgba(255,255,255,.15);color:#fff}
+.dica{font-size:.85rem;color:var(--suave);margin:4px 0}.erro{color:#dc2626;font-size:.88rem;min-height:1.2em;margin:0 0 8px}
+.linha{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.barra{display:flex;justify-content:space-between;align-items:center;margin:22px 0 14px}
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.kpi{background:#fff;border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(15,23,42,.08);border-left:5px solid var(--cor);text-align:left;font:inherit;border-top:0;border-right:0;border-bottom:0}
+.kpi b{display:block;font-size:1.8rem}.kpi span{color:var(--suave);font-size:.88rem}
+button.kpi{cursor:pointer}button.kpi.on{outline:2px solid var(--cor)}
+/* Ocorrências */
+.item{display:flex;gap:14px;background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(15,23,42,.08)}
+.item img{width:96px;height:96px;object-fit:cover;border-radius:10px;flex:none}
+.item .sem-foto{width:96px;height:96px;border-radius:10px;background:var(--borda);display:grid;place-items:center;font-size:1.8rem;flex:none}
+.info{flex:1;font-size:.92rem;min-width:0}.info small{color:var(--suave)}
+.selo{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.75rem;font-weight:700;color:#fff}
+details summary{cursor:pointer;color:var(--cor);font-weight:600;margin-top:8px}
+.tempo{list-style:none;margin:10px 0 0;padding:0 0 0 14px;border-left:2px solid var(--borda)}
+.tempo li{margin-bottom:10px;font-size:.86rem;position:relative}
+.tempo li::before{content:"";position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--p,#64748b)}
+.vazio{text-align:center;color:var(--suave);padding:30px}
+/* Prefeitura */
+.grade{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+#mapa{height:520px;border-radius:10px;margin-top:10px}.rolagem{max-height:520px;overflow:auto;padding:2px}
+.filtros{display:flex;gap:10px;margin:10px 0}.filtros>*{margin:0}
+.item.clic{cursor:pointer}.item.clic:hover{box-shadow:0 3px 10px rgba(15,23,42,.15)}
+.pin span{display:block;width:20px;height:20px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+/* Modal */
+dialog{border:0;border-radius:16px;padding:0;width:min(520px,94vw);max-height:92vh}dialog::backdrop{background:rgba(15,23,42,.55)}
+.modal{padding:22px}.modal h2{margin-bottom:14px}.modal img#preview,.modal .foto-g{max-width:100%;max-height:230px;border-radius:10px;margin-bottom:12px}
+.acoes{display:flex;justify-content:flex-end;gap:10px;margin-top:8px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,30px);background:#0f172a;color:#fff;padding:12px 20px;border-radius:10px;opacity:0;transition:.3s;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+/* Login */
+body.login{display:grid;grid-template-columns:1.1fr 1fr;min-height:100vh}
+.hero{background:linear-gradient(135deg,#0f766e,#1d4ed8);color:#fff;padding:60px;display:flex;flex-direction:column;justify-content:center}
+.hero h1{font-size:2.4rem}.lema{font-size:1.2rem;opacity:.9}.hero ul{list-style:none;padding:0;line-height:2.2;font-size:1.05rem}
+.painel{display:grid;place-items:center;padding:24px}.login-card{width:min(400px,100%);padding:28px}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--borda);border-radius:10px;padding:4px;margin-bottom:20px}
+.seg button{border:0;background:transparent;padding:9px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer;color:var(--suave)}
+.seg button.on{background:#fff;color:var(--texto);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.login h2{margin-bottom:16px}.login .btn{width:100%}.troca{text-align:center;font-size:.9rem}.troca a{color:var(--cor);font-weight:600}
+.demo{margin-top:14px;font-size:.82rem;color:var(--suave)}.demo summary{color:var(--suave);font-weight:400}
+@media(max-width:820px){body.login{grid-template-columns:1fr}.hero{padding:30px}.grade{grid-template-columns:1fr}#mapa{height:320px}}
+@media(max-width:520px){.item{flex-direction:column}.item img,.item .sem-foto{width:100%;height:160px}}
+/* Localização */
+.local{background:#f8fafc;border:1px solid var(--borda);border-radius:12px;padding:14px;margin-bottom:14px}
+.rotulo{display:block;font-weight:600;font-size:.88rem;margin-bottom:8px}
+.seg-local{margin-bottom:12px}.seg-local button{font-size:.88rem}
+.local .linha{margin-bottom:6px}.local .linha input{margin:0;flex:1;min-width:0}
+.sug{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--borda);border-radius:8px;padding:9px 12px;margin-bottom:6px;font:inherit;font-size:.9rem;cursor:pointer}
+.sug:hover{border-color:var(--cor);background:#f0fdfa}
+#gps-status{margin:8px 0 0}

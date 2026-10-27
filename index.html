@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cidade Ativa · Entrar</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login">
+  <section class="hero">
+    <h1>Cidade Ativa</h1>
+
+    <ul>
+      <li>Registre problemas urbanos com foto e localização</li>
+      <li>A inteligência artificial ajuda a classificar</li>
+      <li>Acompanhe cada etapa até a resolução</li>
+    </ul>
+  </section>
+  <section class="painel">
+    <div class="card login-card">
+      <div class="seg">
+        <button type="button" class="on" data-perfil="cidadao">Cidadão</button>
+        <button type="button" data-perfil="prefeitura">Prefeitura</button>
+      </div>
+      <h2 id="titulo">Entrar como cidadão</h2>
+      <form id="form">
+        <label id="l-nome" hidden>Nome completo<input id="nome" autocomplete="name"></label>
+        <label>E-mail<input id="email" type="email" required autocomplete="username"></label>
+        <label>Senha<input id="senha" type="password" required minlength="6" autocomplete="current-password"></label>
+        <p id="erro" class="erro" role="alert"></p>
+        <button class="btn" id="enviar">Entrar</button>
+      </form>
+      <p class="troca" id="troca"><a href="#" id="alternar">Criar conta</a></p>
+      <details class="demo"><summary>Contas de demonstração</summary>
+        <p><b>Cidadão:</b> lucas@email.com / 123456<br>
+        <b>Prefeitura:</b> mariana@prefeitura.sorocaba.sp.gov.br / prefeitura123</p>
+      </details>
+    </div>
+  </section>
+  <div id="toast" class="toast"></div>
+  <script src="js/comum.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>
