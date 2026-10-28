@@ -90,7 +90,13 @@ O projeto conta com desenvolvimento de recursos administrativos para consultar e
 
 ## 🛠️ Tecnologias utilizadas
 
-> 🚧 **Em desenvolvimento**
+O projeto Cidade Ativa será desenvolvido utilizando as seguintes tecnologias:
+
+HTML5: responsável pela estruturação das páginas da aplicação.
+
+CSS3: utilizado para a estilização das páginas, cores, layouts e responsividade.
+
+JavaScript: responsável pelas funcionalidades, interações e manipulação dos dados da aplicação.
 
 
 ## 📈 Relatórios e indicadores
@@ -120,16 +126,31 @@ As instruções de instalação e execução serão adicionadas após a definiç
 
 ## 📁 Estrutura do projeto
 
-O projeto Cidade Ativa está organizado em arquivos responsáveis pela interface principal, pelas funcionalidades da aplicação e pelo painel administrativo.
+O projeto Cidade Ativa está organizado em arquivos HTML e pastas específicas para os estilos visuais e as funcionalidades JavaScript. Essa organização facilita a manutenção do código e permite separar as interfaces destinadas aos cidadãos e à administração pública.
 
-> 🚧 **Em desenvolvimento**
+```text
+Cidade-Ativa/
+├── .github/
+│   └── workflows/  # Configurações de automação do GitHub
+├── css/            # Arquivos de estilização (CSS)
+├── js/             # Arquivos de funcionalidades (JavaScript)
+├── README.md       # Documentação do projeto
+├── cidadao.html    # Interface destinada aos cidadãos
+├── index.html      # Página inicial da aplicação
+└── prefeitura.html # Interface destinada à prefeitura
+```
 
+### 📄 Descrição dos arquivos e pastas
 
-### 📄 Descrição dos arquivos
+- **`.github/workflows/`:** armazena arquivos de configuração para automações do GitHub Actions.
+- **`css/`:** reúne os arquivos CSS responsáveis pela aparência visual, cores, layouts e responsividade das páginas.
+- **`js/`:** contém os arquivos JavaScript responsáveis pelas interações e funcionalidades da aplicação.
+- **`README.md`:** apresenta a descrição do projeto, seus objetivos, as tecnologias utilizadas e a organização dos códigos.
+- **`cidadao.html`:** página destinada aos cidadãos, para acesso às funcionalidades relacionadas ao registro e à consulta de ocorrências.
+- **`index.html`:** página inicial da aplicação, utilizada como ponto de entrada para a navegação.
+- **`prefeitura.html`:** página destinada à administração pública, voltada à consulta e ao gerenciamento das ocorrências.
 
-> 🚧 **Em desenvolvimento**
-
-
+A separação dos arquivos HTML, CSS e JavaScript contribui para uma estrutura mais organizada, facilitando futuras atualizações e a implementação de novas funcionalidades.
 
 ## 🌱 Impacto esperado
 
