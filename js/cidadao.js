@@ -1,19 +1,18 @@
 (async () => {
-  await iniciarDados();
-  const s = exigirPerfil('cidadao'); if (!s) return;
-  let foto = '', pos = null, endereco = '';
+  const s = await exigirPerfil('cidadao'); if (!s) return;
+  let foto = null, pos = null, endereco = '', minhas = [];
 
   for (const [k, v] of Object.entries(CATEGORIAS)) $('categoria').add(new Option(v, k));
-  const minhas = () => ler(K.occ, []).filter(o => o.userId === s.id).sort((a, b) => b.data.localeCompare(a.data));
 
+  async function carregar() { minhas = await listarOcorrencias(); render(); }
   function render() {
-    const m = minhas();
+    const m = minhas;
     $('k-total').textContent = m.length;
     $('k-and').textContent = m.filter(o => o.status === 'Em análise' || o.status === 'Em andamento').length;
     $('k-res').textContent = m.filter(o => o.status === 'Resolvida').length;
     $('lista').innerHTML = m.map(o => `<div class="item">${fotoHTML(o)}<div class="info">
       <b>${esc(CATEGORIAS[o.categoria])}</b> ${selo(o.status)}<br>${esc(o.descricao)}<br>
-      <small>📍 ${esc(enderecoTexto(o))}<br>${dataBR(o.data)}</small>
+      <small>📍 ${esc(enderecoTexto(o))}<br>${dataBR(o.criado_em)}</small>
       <details><summary>Acompanhar andamento</summary>${tempoHTML(o)}</details></div></div>`).join('')
       || '<div class="card vazio">Você ainda não registrou nenhuma ocorrência.<br>Clique em “Nova ocorrência” para começar.</div>';
   }
@@ -24,8 +23,11 @@
 
   $('foto').onchange = async e => {
     if (!e.target.files[0]) return;
-    foto = await reduzirFoto(e.target.files[0]);
-    $('preview').src = foto; $('preview').hidden = false;
+    try {
+      if (foto) URL.revokeObjectURL(foto.url);
+      foto = await reduzirFoto(e.target.files[0]);
+      $('preview').src = foto.url; $('preview').hidden = false;
+    } catch (err) { foto = null; e.target.value = ''; toast(err.message); }
   };
 
   // ----- Localização: GPS ou endereço digitado -----
@@ -76,21 +78,26 @@
     const d = $('descricao').value.trim();
     if (!d) { $('ia-status').textContent = 'Escreva a descrição primeiro.'; return; }
     $('ia-status').textContent = 'Analisando...';
-    const cat = await classificarProblema(d, foto);
+    const cat = await classificarProblema(d, foto && foto.blob);
     $('categoria').value = cat;
     $('ia-status').textContent = `Sugestão da IA: ${CATEGORIAS[cat]} (você pode alterar).`;
   };
 
-  $('form').onsubmit = e => {
+  $('form').onsubmit = async e => {
     e.preventDefault();
     if (!pos) { toast('Defina a localização: use o GPS ou digite e escolha um endereço.'); return; }
-    const lista = ler(K.occ, []);
-    lista.push({ id: Date.now(), userId: s.id, autor: s.nome, descricao: $('descricao').value.trim(), categoria: $('categoria').value,
-      status: 'Recebida', endereco, lat: pos.lat, lng: pos.lng, foto, data: new Date().toISOString(),
-      historico: [{ data: new Date().toISOString(), status: 'Recebida', nota: 'Ocorrência registrada.', por: 'Sistema' }] });
-    if (!gravar(K.occ, lista)) return;
-    e.target.reset(); $('preview').hidden = true; foto = ''; modo('gps'); $('ia-status').textContent = '';
-    dlg.close(); render(); toast('Ocorrência enviada à prefeitura!');
+    const btn = $('btn-enviar'); btn.disabled = true; btn.textContent = 'Enviando...';
+    try {
+      await criarOcorrencia(s.id, { descricao: $('descricao').value.trim(), categoria: $('categoria').value,
+        endereco: endereco || null, lat: pos.lat, lng: pos.lng }, foto && foto.blob);
+    } catch (err) {
+      toast('Não foi possível enviar: ' + mensagemErro(err)); return;
+    } finally { btn.disabled = false; btn.textContent = 'Enviar'; }
+    e.target.reset(); $('preview').hidden = true;
+    if (foto) URL.revokeObjectURL(foto.url); foto = null;
+    modo('gps'); $('ia-status').textContent = '';
+    dlg.close(); toast('Ocorrência enviada à prefeitura!');
+    carregar();
   };
-  render();
+  carregar();
 })();

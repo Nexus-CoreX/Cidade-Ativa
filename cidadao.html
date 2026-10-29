@@ -42,10 +42,12 @@
       <label>Categoria<select id="categoria"></select></label>
       <button type="button" id="btn-ia" class="btn-sec">Sugerir categoria com IA</button>
       <p id="ia-status" class="dica"></p>
-      <div class="acoes"><button type="button" id="btn-cancelar" class="btn-sec">Cancelar</button><button class="btn">Enviar</button></div>
+      <div class="acoes"><button type="button" id="btn-cancelar" class="btn-sec">Cancelar</button><button class="btn" id="btn-enviar">Enviar</button></div>
     </form>
   </dialog>
   <div id="toast" class="toast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
   <script src="js/comum.js"></script>
   <script src="js/ia.js"></script>
   <script src="js/geo.js"></script>

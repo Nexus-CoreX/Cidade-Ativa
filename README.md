@@ -98,6 +98,10 @@ CSS3: utilizado para a estilização das páginas, cores, layouts e responsivida
 
 JavaScript: responsável pelas funcionalidades, interações e manipulação dos dados da aplicação.
 
+Supabase: banco de dados PostgreSQL, autenticação de usuários e armazenamento das fotos.
+
+Leaflet + OpenStreetMap: mapa das ocorrências e busca de endereços.
+
 
 ## 📈 Relatórios e indicadores
 
@@ -115,12 +119,54 @@ Esses recursos ajudam a organizar as informações e podem contribuir para a ide
 ### Pré-requisitos
 
 - Navegador atualizado, como Google Chrome ou Microsoft Edge.
-- Acesso aos arquivos do projeto.
-- Configuração do projeto no Supabase para utilizar os recursos que dependem do banco de dados.
+- Um projeto no [Supabase](https://supabase.com) (o plano gratuito é suficiente).
+- [VS Code](https://code.visualstudio.com/) com a extensão **Live Server** (ou outro servidor local).
 
-> 🚧 **Em desenvolvimento**
+### 1. Configurar o banco de dados (uma única vez)
 
-As instruções de instalação e execução serão adicionadas após a definição da stack tecnológica.
+1. No painel do Supabase, abra **SQL Editor → New query**.
+2. Cole todo o conteúdo de [`supabase/schema.sql`](supabase/schema.sql) e clique em **Run**.
+   Isso cria as tabelas `perfis`, `ocorrencias` e `historico`, as regras de segurança (RLS) e o bucket `fotos`.
+3. Em **Authentication → Sign In / Providers → Email**, decida sobre **Confirm email**:
+   - ligado: o cidadão precisa clicar no link enviado por e-mail antes de entrar;
+   - desligado: a conta pode ser usada na hora (mais prático para testes e apresentação).
+4. Em **Authentication → URL Configuration**, coloque em **Site URL** o endereço onde o site roda (ex.: `http://127.0.0.1:5500`).
+
+### 2. Ligar o site ao Supabase
+
+O arquivo [`js/config.js`](js/config.js) guarda a **Project URL** e a **publishable key** (em *Project Settings → API Keys*).
+Essa chave pode ficar no código; a proteção dos dados é feita pelas regras RLS.
+**Nunca** coloque a chave `secret`/`service_role` no projeto.
+
+### 3. Executar
+
+Abra a pasta no VS Code, clique com o botão direito em `index.html` → **Open with Live Server**.
+(Abrir o arquivo com duplo clique não funciona bem: o login e o GPS precisam de um endereço `http://`.)
+
+### 4. Criar a conta da prefeitura
+
+Todo cadastro feito pelo site é de **cidadão**. Para criar um acesso da prefeitura:
+
+1. Cadastre a conta normalmente pela tela inicial.
+2. No **SQL Editor**, execute (trocando o e-mail):
+
+```sql
+update public.perfis set perfil = 'prefeitura'
+where id = (select id from auth.users where email = 'email-da-prefeitura@exemplo.com');
+```
+
+3. Entre pela aba **Prefeitura**.
+
+### 🗄️ Estrutura do banco
+
+| Tabela        | Conteúdo                                                                 |
+| ------------- | ------------------------------------------------------------------------ |
+| `perfis`      | Nome e tipo de cada usuário (`cidadao` ou `prefeitura`)                  |
+| `ocorrencias` | Categoria, descrição, status, endereço, latitude/longitude e link da foto |
+| `historico`   | Linha do tempo de cada ocorrência (status, mensagem, responsável, data)  |
+
+As fotos ficam no bucket `fotos` do Supabase Storage. Pelas regras de segurança, o cidadão só vê as próprias ocorrências,
+a prefeitura vê todas, e somente a prefeitura pode alterar o status (função `atualizar_status`).
 
 ---
 
@@ -134,6 +180,8 @@ Cidade-Ativa/
 │   └── workflows/  # Configurações de automação do GitHub
 ├── css/            # Arquivos de estilização (CSS)
 ├── js/             # Arquivos de funcionalidades (JavaScript)
+├── supabase/
+│   └── schema.sql  # Script do banco de dados (tabelas, segurança e fotos)
 ├── README.md       # Documentação do projeto
 ├── cidadao.html    # Interface destinada aos cidadãos
 ├── index.html      # Página inicial da aplicação
@@ -144,7 +192,8 @@ Cidade-Ativa/
 
 - **`.github/workflows/`:** armazena arquivos de configuração para automações do GitHub Actions.
 - **`css/`:** reúne os arquivos CSS responsáveis pela aparência visual, cores, layouts e responsividade das páginas.
-- **`js/`:** contém os arquivos JavaScript responsáveis pelas interações e funcionalidades da aplicação.
+- **`js/`:** contém os arquivos JavaScript responsáveis pelas interações e funcionalidades da aplicação. O `config.js` guarda a conexão com o Supabase e o `comum.js` concentra o acesso ao banco.
+- **`supabase/schema.sql`:** script que cria as tabelas, as regras de segurança e o armazenamento de fotos no Supabase.
 - **`README.md`:** apresenta a descrição do projeto, seus objetivos, as tecnologias utilizadas e a organização dos códigos.
 - **`cidadao.html`:** página destinada aos cidadãos, para acesso às funcionalidades relacionadas ao registro e à consulta de ocorrências.
 - **`index.html`:** página inicial da aplicação, utilizada como ponto de entrada para a navegação.
