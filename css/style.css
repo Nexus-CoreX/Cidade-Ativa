@@ -64,3 +64,11 @@ body.login{display:grid;grid-template-columns:1.1fr 1fr;min-height:100vh}
 .sug{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--borda);border-radius:8px;padding:9px 12px;margin-bottom:6px;font:inherit;font-size:.9rem;cursor:pointer}
 .sug:hover{border-color:var(--cor);background:#f0fdfa}
 #gps-status{margin:8px 0 0}
+/* Indicadores e exportação */
+.filtros #btn-csv{flex:none;white-space:nowrap}
+.indicadores{margin-top:8px}
+.graficos{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.graficos h3{margin:0 0 10px;font-size:.95rem}
+.grafico{position:relative;height:240px}
+@media(max-width:1000px){.graficos{grid-template-columns:1fr 1fr}}
+@media(max-width:680px){.graficos{grid-template-columns:1fr}.filtros{flex-wrap:wrap}}

@@ -59,7 +59,7 @@ O projeto conta com desenvolvimento de recursos administrativos para consultar e
 - Indicadores e gráficos estatísticos.
 - Exportação dos dados em CSV.
 
-**Observação:** a disponibilidade dessas funcionalidades depende dos arquivos e da versão efetivamente publicados no repositório.
+Os gráficos e a exportação CSV respeitam os filtros aplicados (status, categoria e busca). O arquivo CSV usa `;` como separador e abre direto no Excel em português.
 
 ## 🔄 Fluxo da aplicação
 
@@ -101,6 +101,8 @@ JavaScript: responsável pelas funcionalidades, interações e manipulação dos
 Supabase: banco de dados PostgreSQL, autenticação de usuários e armazenamento das fotos.
 
 Leaflet + OpenStreetMap: mapa das ocorrências e busca de endereços.
+
+Chart.js: gráficos do painel da prefeitura.
 
 
 ## 📈 Relatórios e indicadores

@@ -10,6 +10,56 @@
 
   async function carregar() { ocorrencias = await listarOcorrencias(); render(); }
 
+  // ----- Indicadores (Chart.js) -----
+  const graficos = {};
+  function desenhar(id, config) {
+    if (!window.Chart) return;                       // biblioteca não carregou (sem internet)
+    if (graficos[id]) { graficos[id].data = config.data; graficos[id].update(); return; }
+    graficos[id] = new Chart($(id), config);
+  }
+  function atualizarGraficos(lista) {
+    if (!window.Chart) { $('g-legenda').textContent = 'Não foi possível carregar os gráficos.'; return; }
+    const base = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } };
+    const inteiros = { beginAtZero: true, ticks: { precision: 0 } };
+
+    desenhar('g-status', { type: 'doughnut',
+      data: { labels: STATUS, datasets: [{ data: STATUS.map(st => lista.filter(o => o.status === st).length),
+        backgroundColor: STATUS.map(st => COR[st]) }] },
+      options: { ...base, plugins: { legend: { position: 'bottom' } } } });
+
+    const cats = Object.keys(CATEGORIAS);
+    desenhar('g-cat', { type: 'bar',
+      data: { labels: cats.map(c => CATEGORIAS[c]), datasets: [{ label: 'Ocorrências',
+        data: cats.map(c => lista.filter(o => o.categoria === c).length), backgroundColor: '#2563eb', borderRadius: 6 }] },
+      options: { ...base, indexAxis: 'y', scales: { x: inteiros } } });
+
+    const meses = [], hoje = new Date();
+    for (let i = 5; i >= 0; i--) meses.push(new Date(hoje.getFullYear(), hoje.getMonth() - i, 1));
+    const chave = d => d.getFullYear() * 12 + d.getMonth();
+    desenhar('g-mes', { type: 'bar',
+      data: { labels: meses.map(d => d.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' })),
+        datasets: [{ label: 'Ocorrências', backgroundColor: '#0f766e', borderRadius: 6,
+          data: meses.map(m => lista.filter(o => chave(new Date(o.criado_em)) === chave(m)).length) }] },
+      options: { ...base, scales: { y: inteiros } } });
+  }
+
+  // ----- Exportação CSV (abre direto no Excel em português) -----
+  function exportarCSV() {
+    const lista = filtradas();
+    if (!lista.length) { toast('Não há ocorrências para exportar com esses filtros.'); return; }
+    const campo = v => { const s = String(v ?? ''); return /[";\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+    const linhas = [['ID', 'Data', 'Categoria', 'Status', 'Descrição', 'Endereço', 'Latitude', 'Longitude', 'Autor', 'Foto']]
+      .concat(lista.map(o => [o.id, dataBR(o.criado_em), CATEGORIAS[o.categoria], o.status, o.descricao,
+        o.endereco, String(o.lat).replace('.', ','), String(o.lng).replace('.', ','), o.autor, o.foto_url]));
+    const csv = '\ufeff' + linhas.map(l => l.map(campo).join(';')).join('\r\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = `ocorrencias-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast(`${lista.length} ocorrência(s) exportada(s).`);
+  }
+  $('btn-csv').onclick = exportarCSV;
+
   function filtradas() {
     const q = $('busca').value.toLowerCase(), c = $('f-cat').value;
     return ocorrencias.filter(o => (!fStatus || o.status === fStatus) && (!c || o.categoria === c) &&
@@ -33,6 +83,7 @@
     lista.forEach(o => L.marker([o.lat, o.lng], { icon:L.divIcon({ className:'pin', iconSize:[20,20], iconAnchor:[10,20],
       html:`<span style="background:${COR[o.status]}"></span>` }) })
       .addTo(camada).on('click', () => abrir(o.id)).bindTooltip(esc(CATEGORIAS[o.categoria])));
+    atualizarGraficos(lista);
     if (lista.length) mapa.fitBounds(L.latLngBounds(lista.map(o => [o.lat, o.lng])).pad(0.3), { maxZoom:15 });
   }
 

@@ -20,14 +20,24 @@
         <div class="filtros">
           <input id="busca" type="search" placeholder="Buscar na descrição ou autor...">
           <select id="f-cat"><option value="">Todas as categorias</option></select>
+          <button type="button" id="btn-csv" class="btn-sec" title="Baixa as ocorrências filtradas em CSV">Exportar CSV</button>
         </div>
         <div id="lista" class="rolagem"></div>
       </div>
     </div>
+    <section class="indicadores">
+      <div class="barra"><h2>Indicadores</h2><span class="dica" id="g-legenda">Conforme os filtros aplicados</span></div>
+      <div class="graficos">
+        <div class="card"><h3>Por status</h3><div class="grafico"><canvas id="g-status" aria-label="Ocorrências por status" role="img"></canvas></div></div>
+        <div class="card"><h3>Por categoria</h3><div class="grafico"><canvas id="g-cat" aria-label="Ocorrências por categoria" role="img"></canvas></div></div>
+        <div class="card"><h3>Por mês (últimos 6)</h3><div class="grafico"><canvas id="g-mes" aria-label="Ocorrências por mês" role="img"></canvas></div></div>
+      </div>
+    </section>
   </main>
   <dialog id="dlg"><div id="det" class="modal"></div></dialog>
   <div id="toast" class="toast"></div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/config.js"></script>
   <script src="js/comum.js"></script>
