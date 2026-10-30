@@ -9,7 +9,7 @@
 <body class="pref">
   <header class="topo">
     <h1>Painel da Prefeitura</h1>
-    <div class="usuario"><span><b id="nome-usuario"></b></span><button id="btn-sair" class="btn-ghost">Sair</button></div>
+    <div class="usuario"><span><b id="nome-usuario"></b> <small id="papel" class="papel"></small></span><button id="btn-equipe" class="btn-ghost" hidden>Equipe</button><button id="btn-sair" class="btn-ghost">Sair</button></div>
   </header>
   <main class="largo">
     <div class="kpis" id="kpis"></div>
@@ -35,6 +35,22 @@
     </section>
   </main>
   <dialog id="dlg"><div id="det" class="modal"></div></dialog>
+  <dialog id="dlg-equipe" class="largo">
+    <div class="modal">
+      <div class="barra" style="margin-top:0"><h2>Equipe da prefeitura</h2><button type="button" class="btn-sec" id="eq-fechar">Fechar</button></div>
+      <form id="form-equipe" class="form-equipe">
+        <h3>Cadastrar nova conta da prefeitura</h3>
+        <label>Nome<input id="eq-nome" required autocomplete="off"></label>
+        <label>E-mail<input id="eq-email" type="email" required autocomplete="off"></label>
+        <label>Senha inicial<input id="eq-senha" type="password" required minlength="6" autocomplete="new-password"></label>
+        <label class="check"><input type="checkbox" id="eq-admin"> Administrador <small>(pode cadastrar contas e definir admins)</small></label>
+        <p id="eq-erro" class="erro" role="alert"></p>
+        <div class="acoes"><button class="btn" id="eq-criar">Cadastrar conta</button></div>
+      </form>
+      <h3>Contas cadastradas</h3>
+      <div id="eq-lista"></div>
+    </div>
+  </dialog>
   <div id="toast" class="toast"></div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>

@@ -114,5 +114,53 @@
     $('dlg').showModal();
   }
   $('busca').oninput = render; $('f-cat').onchange = render;
+
+  // ----- Equipe da prefeitura (só administradores) -----
+  $('papel').textContent = s.mestre ? 'Mestre' : (s.admin ? 'Admin' : '');
+  $('papel').hidden = !s.admin;
+  if (s.admin) {
+    $('btn-equipe').hidden = false;
+    $('btn-equipe').onclick = () => { $('dlg-equipe').showModal(); carregarEquipe(); };
+    $('eq-fechar').onclick = () => $('dlg-equipe').close();
+
+    async function carregarEquipe() {
+      $('eq-lista').innerHTML = '<p class="dica">Carregando...</p>';
+      let equipe;
+      try { equipe = await listarEquipe(); }
+      catch (err) { $('eq-lista').innerHTML = `<p class="erro">${esc(mensagemErro(err))}</p>`; return; }
+      $('eq-lista').innerHTML = equipe.map(m => {
+        const voce = m.id === s.id, travado = voce || m.mestre;
+        return `<div class="membro" data-id="${m.id}">
+          <div class="quem"><b>${esc(m.nome)}</b>${m.mestre ? '<span class="tag mestre">Mestre</span>' : (m.admin ? '<span class="tag">Admin</span>' : '')}
+            ${voce ? '<small>(você)</small>' : ''}<br><small>${esc(m.email || '')}</small></div>
+          ${travado ? '' : `<button type="button" class="btn-sec" data-acao="admin">${m.admin ? 'Tirar admin' : 'Tornar admin'}</button>
+            <button type="button" class="btn-sec btn-perigo" data-acao="remover">Remover acesso</button>`}
+        </div>`;
+      }).join('') || '<p class="dica">Nenhuma conta da prefeitura.</p>';
+
+      document.querySelectorAll('.membro button').forEach(b => b.onclick = async () => {
+        const id = b.closest('.membro').dataset.id, m = equipe.find(x => x.id === id);
+        if (b.dataset.acao === 'remover' && !confirm(`Remover o acesso de ${m.nome} à prefeitura?\nA conta continuará existindo como cidadão.`)) return;
+        b.disabled = true;
+        try {
+          if (b.dataset.acao === 'admin') await definirAdmin(id, !m.admin);
+          else await removerAcessoPrefeitura(id);
+          toast(b.dataset.acao === 'admin' ? (m.admin ? `${m.nome} não é mais admin.` : `${m.nome} agora é admin.`) : `Acesso de ${m.nome} removido.`);
+        } catch (err) { toast(mensagemErro(err)); }
+        carregarEquipe();
+      });
+    }
+
+    $('form-equipe').onsubmit = async e => {
+      e.preventDefault();
+      const btn = $('eq-criar'); btn.disabled = true; btn.textContent = 'Cadastrando...'; $('eq-erro').textContent = '';
+      try {
+        await criarContaPrefeitura($('eq-nome').value.trim(), $('eq-email').value.trim(), $('eq-senha').value, $('eq-admin').checked);
+        toast(`Conta de ${$('eq-nome').value.trim()} criada. Ela já pode entrar pela aba "Prefeitura".`);
+        e.target.reset(); carregarEquipe();
+      } catch (err) { $('eq-erro').textContent = mensagemErro(err); }
+      finally { btn.disabled = false; btn.textContent = 'Cadastrar conta'; }
+    };
+  }
   carregar();
 })();

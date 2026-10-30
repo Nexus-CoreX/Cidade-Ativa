@@ -45,6 +45,11 @@ Os dados são armazenados no banco de dados, possibilitando a consulta e o geren
 
 O usuário pode informar a categoria, a descrição e a localização do problema. Após o envio, os dados são armazenados na tabela `ocorrencias` do Supabase.
 
+### Visão geral (cidadão)
+
+Na aba **Visão geral**, o cidadão vê todas as ocorrências da cidade, agrupadas por status (Recebida, Em análise, Em andamento e Resolvida),
+com busca por nome de quem registrou, endereço ou descrição (sem diferenciar acentos e maiúsculas). As ocorrências do próprio usuário aparecem marcadas como **Sua**.
+
 ### Visualização no mapa
 
 A aplicação permite trabalhar com a localização geográfica das ocorrências, facilitando a identificação dos locais que precisam de atenção.
@@ -58,6 +63,17 @@ O projeto conta com desenvolvimento de recursos administrativos para consultar e
 - Atualização do status dos registros.
 - Indicadores e gráficos estatísticos.
 - Exportação dos dados em CSV.
+
+### Contas da prefeitura e administradores
+
+Não existe cadastro público de prefeitura. A **conta mestre** (criada pelo script `03-conta-mestre.sql`) e os demais **administradores**
+usam o botão **Equipe**, no topo do painel, para:
+
+- cadastrar novas contas da prefeitura, definindo se cada uma é administradora;
+- dar ou tirar o acesso de administrador;
+- remover o acesso da prefeitura (a conta continua existindo como cidadão).
+
+Ninguém altera o próprio acesso, e a conta mestre não pode ser alterada pelo site.
 
 Os gráficos e a exportação CSV respeitam os filtros aplicados (status, categoria e busca). O arquivo CSV usa `;` como separador e abre direto no Excel em português.
 
@@ -127,8 +143,11 @@ Esses recursos ajudam a organizar as informações e podem contribuir para a ide
 ### 1. Configurar o banco de dados (uma única vez)
 
 1. No painel do Supabase, abra **SQL Editor → New query**.
-2. Cole todo o conteúdo de [`supabase/schema.sql`](supabase/schema.sql) e clique em **Run**.
-   Isso cria as tabelas `perfis`, `ocorrencias` e `historico`, as regras de segurança (RLS) e o bucket `fotos`.
+2. Rode os scripts da pasta `supabase/`, **nesta ordem** (cole o conteúdo de cada um e clique em **Run**):
+   1. [`01-estrutura.sql`](supabase/01-estrutura.sql): cria as tabelas `perfis`, `ocorrencias` e `historico`, as regras de segurança (RLS) e o bucket `fotos`.
+      **Atenção:** apaga os dados existentes; rode só na primeira instalação.
+   2. [`02-contas-e-visao-geral.sql`](supabase/02-contas-e-visao-geral.sql): administradores, conta mestre e visão geral. Não apaga dados.
+   3. [`03-conta-mestre.sql`](supabase/03-conta-mestre.sql): **troque o e-mail e a senha** antes de rodar. Cria a conta mestre da prefeitura.
 3. Em **Authentication → Sign In / Providers → Email**, decida sobre **Confirm email**:
    - ligado: o cidadão precisa clicar no link enviado por e-mail antes de entrar;
    - desligado: a conta pode ser usada na hora (mais prático para testes e apresentação).
@@ -145,30 +164,25 @@ Essa chave pode ficar no código; a proteção dos dados é feita pelas regras R
 Abra a pasta no VS Code, clique com o botão direito em `index.html` → **Open with Live Server**.
 (Abrir o arquivo com duplo clique não funciona bem: o login e o GPS precisam de um endereço `http://`.)
 
-### 4. Criar a conta da prefeitura
+### 4. Contas da prefeitura
 
-Todo cadastro feito pelo site é de **cidadão**. Para criar um acesso da prefeitura:
+Todo cadastro feito pela tela inicial é de **cidadão**. Para a prefeitura:
 
-1. Cadastre a conta normalmente pela tela inicial.
-2. No **SQL Editor**, execute (trocando o e-mail):
-
-```sql
-update public.perfis set perfil = 'prefeitura'
-where id = (select id from auth.users where email = 'email-da-prefeitura@exemplo.com');
-```
-
-3. Entre pela aba **Prefeitura**.
+1. Entre pela aba **Prefeitura** com a conta mestre (e-mail e senha definidos no `03-conta-mestre.sql`).
+2. Clique em **Equipe** e cadastre as contas da equipe, marcando **Administrador** para quem também poderá cadastrar contas.
+3. Cada pessoa entra pela aba **Prefeitura** com o e-mail e a senha inicial cadastrados.
 
 ### 🗄️ Estrutura do banco
 
 | Tabela        | Conteúdo                                                                 |
 | ------------- | ------------------------------------------------------------------------ |
-| `perfis`      | Nome e tipo de cada usuário (`cidadao` ou `prefeitura`)                  |
+| `perfis`      | Nome, e-mail e tipo de cada usuário (`cidadao` ou `prefeitura`), além de `admin` e `mestre` |
 | `ocorrencias` | Categoria, descrição, status, endereço, latitude/longitude e link da foto |
 | `historico`   | Linha do tempo de cada ocorrência (status, mensagem, responsável, data)  |
 
-As fotos ficam no bucket `fotos` do Supabase Storage. Pelas regras de segurança, o cidadão só vê as próprias ocorrências,
-a prefeitura vê todas, e somente a prefeitura pode alterar o status (função `atualizar_status`).
+As fotos ficam no bucket `fotos` do Supabase Storage. Pelas regras de segurança, todo usuário logado pode ver as ocorrências
+(visão geral), cada cidadão só registra em seu próprio nome, somente a prefeitura altera o status (função `atualizar_status`)
+e somente administradores gerenciam a equipe (`criar_conta_prefeitura`, `definir_admin`, `remover_acesso_prefeitura`).
 
 ---
 
@@ -183,7 +197,9 @@ Cidade-Ativa/
 ├── css/            # Arquivos de estilização (CSS)
 ├── js/             # Arquivos de funcionalidades (JavaScript)
 ├── supabase/
-│   └── schema.sql  # Script do banco de dados (tabelas, segurança e fotos)
+│   ├── 01-estrutura.sql            # Tabelas, segurança e fotos
+│   ├── 02-contas-e-visao-geral.sql # Administradores e visão geral
+│   └── 03-conta-mestre.sql         # Criação da conta mestre
 ├── README.md       # Documentação do projeto
 ├── cidadao.html    # Interface destinada aos cidadãos
 ├── index.html      # Página inicial da aplicação
@@ -195,7 +211,7 @@ Cidade-Ativa/
 - **`.github/workflows/`:** armazena arquivos de configuração para automações do GitHub Actions.
 - **`css/`:** reúne os arquivos CSS responsáveis pela aparência visual, cores, layouts e responsividade das páginas.
 - **`js/`:** contém os arquivos JavaScript responsáveis pelas interações e funcionalidades da aplicação. O `config.js` guarda a conexão com o Supabase e o `comum.js` concentra o acesso ao banco.
-- **`supabase/schema.sql`:** script que cria as tabelas, as regras de segurança e o armazenamento de fotos no Supabase.
+- **`supabase/`:** scripts SQL do banco, para rodar em ordem no SQL Editor do Supabase (estrutura, contas/visão geral e conta mestre).
 - **`README.md`:** apresenta a descrição do projeto, seus objetivos, as tecnologias utilizadas e a organização dos códigos.
 - **`cidadao.html`:** página destinada aos cidadãos, para acesso às funcionalidades relacionadas ao registro e à consulta de ocorrências.
 - **`index.html`:** página inicial da aplicação, utilizada como ponto de entrada para a navegação.

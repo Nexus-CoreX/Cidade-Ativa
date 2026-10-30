@@ -29,11 +29,11 @@ function mensagemErro(erro) {
 }
 
 // ----- Autenticação -----
-// Devolve { id, nome, perfil } do usuário logado, ou null
+// Devolve { id, nome, perfil, admin, mestre } do usuário logado, ou null
 async function sessao() {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) return null;
-  const { data, error } = await sb.from('perfis').select('id, nome, perfil').eq('id', session.user.id).single();
+  const { data, error } = await sb.from('perfis').select('id, nome, perfil, admin, mestre').eq('id', session.user.id).single();
   if (error || !data) return null;
   return data;
 }
@@ -69,10 +69,11 @@ async function exigirPerfil(perfil) {
 }
 
 // ----- Ocorrências -----
-// As regras do banco já filtram: cidadão recebe só as dele; prefeitura recebe todas.
-async function listarOcorrencias() {
-  const { data, error } = await sb.from('ocorrencias')
-    .select('*, historico(*)')
+// Sem userId: todas as ocorrências (visão geral / prefeitura). Com userId: só as daquele usuário.
+async function listarOcorrencias(userId) {
+  let q = sb.from('ocorrencias').select('*, historico(*)');
+  if (userId) q = q.eq('user_id', userId);
+  const { data, error } = await q
     .order('criado_em', { ascending: false })
     .order('criado_em', { referencedTable: 'historico', ascending: true });
   if (error) { toast('Erro ao carregar ocorrências: ' + mensagemErro(error)); return []; }
@@ -94,6 +95,26 @@ async function criarOcorrencia(userId, dados, fotoBlob) {
 
 async function atualizarStatus(id, status, nota) {
   const { error } = await sb.rpc('atualizar_status', { p_id: id, p_status: status, p_nota: nota });
+  if (error) throw error;
+}
+
+// ----- Equipe da prefeitura (somente administradores) -----
+async function listarEquipe() {
+  const { data, error } = await sb.from('perfis').select('id, nome, email, admin, mestre, criado_em')
+    .eq('perfil', 'prefeitura').order('mestre', { ascending: false }).order('nome');
+  if (error) throw error;
+  return data;
+}
+async function criarContaPrefeitura(nome, email, senha, admin) {
+  const { error } = await sb.rpc('criar_conta_prefeitura', { p_nome: nome, p_email: email, p_senha: senha, p_admin: admin });
+  if (error) throw error;
+}
+async function definirAdmin(id, admin) {
+  const { error } = await sb.rpc('definir_admin', { p_id: id, p_admin: admin });
+  if (error) throw error;
+}
+async function removerAcessoPrefeitura(id) {
+  const { error } = await sb.rpc('remover_acesso_prefeitura', { p_id: id });
   if (error) throw error;
 }
 

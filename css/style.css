@@ -72,3 +72,29 @@ body.login{display:grid;grid-template-columns:1.1fr 1fr;min-height:100vh}
 .grafico{position:relative;height:240px}
 @media(max-width:1000px){.graficos{grid-template-columns:1fr 1fr}}
 @media(max-width:680px){.graficos{grid-template-columns:1fr}.filtros{flex-wrap:wrap}}
+/* Equipe da prefeitura */
+.papel{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:99px;background:rgba(255,255,255,.18);font-size:.75rem;font-weight:600}
+dialog.largo{width:min(720px,96vw)}
+.modal h3{font-size:.95rem;margin:18px 0 10px}
+.form-equipe{background:#f8fafc;border:1px solid var(--borda);border-radius:12px;padding:14px 16px 4px}
+.form-equipe h3{margin-top:0}
+label.check{display:flex;align-items:center;gap:8px;font-weight:600}
+label.check input{width:auto;margin:0}label.check small{color:var(--suave);font-weight:400}
+.membro{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--borda);flex-wrap:wrap}
+.membro .quem{flex:1;min-width:180px;font-size:.92rem}.membro .quem small{color:var(--suave)}
+.membro .btn-sec{padding:7px 12px;font-size:.85rem}
+.btn-perigo{background:#fee2e2;color:#b91c1c}
+.tag{display:inline-block;padding:1px 8px;border-radius:99px;font-size:.72rem;font-weight:700;margin-left:4px;background:#e0e7ff;color:#3730a3}
+.tag.mestre{background:#fef3c7;color:#92400e}
+/* Visão geral do cidadão */
+.abas{margin:0 0 18px}
+#g-busca{margin:0 0 16px}
+.grupo{margin-bottom:14px}
+.grupo>summary{display:flex;align-items:center;gap:10px;list-style:none;margin:0;padding:10px 4px;color:var(--texto);border-bottom:2px solid var(--borda)}
+.grupo>summary::-webkit-details-marker{display:none}
+.grupo>summary::before{content:"▸";color:var(--suave);transition:transform .15s}
+.grupo[open]>summary::before{transform:rotate(90deg)}
+.grupo>summary .conta{margin-left:auto;color:var(--suave);font-weight:600;font-size:.9rem}
+.grupo .itens{padding-top:12px}
+.grupo .item img,.grupo .item .sem-foto{width:72px;height:72px}
+.tag.sua{background:#ccfbf1;color:#115e59}

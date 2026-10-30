@@ -1,7 +1,8 @@
 -- =====================================================================
 -- Cidade Ativa · Estrutura do banco no Supabase
 -- Como usar: Supabase > SQL Editor > New query > cole tudo > Run.
--- Pode ser executado mais de uma vez (apaga e recria as tabelas do app).
+-- ATENÇÃO: apaga e recria as tabelas do app. Rode só na primeira instalação;
+-- depois rode 02-contas-e-visao-geral.sql e 03-conta-mestre.sql.
 -- =====================================================================
 
 -- Limpeza (cuidado: apaga os dados das tabelas do Cidade Ativa)
@@ -23,7 +24,7 @@ create table public.perfis (
 
 -- Cria o perfil automaticamente quando alguém se cadastra.
 -- Todo cadastro pelo site vira "cidadao"; contas da prefeitura são promovidas
--- manualmente (veja o final deste arquivo).
+-- manualmente (ou use a conta mestre, veja 03-conta-mestre.sql).
 create or replace function public.criar_perfil()
 returns trigger language plpgsql security definer set search_path = public as $$
 begin
