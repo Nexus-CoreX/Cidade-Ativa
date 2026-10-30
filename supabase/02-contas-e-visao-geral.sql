@@ -15,6 +15,12 @@ alter table public.perfis add column if not exists email  text;
 alter table public.perfis add column if not exists admin  boolean not null default false;
 alter table public.perfis add column if not exists mestre boolean not null default false;
 
+-- Garante que todo usuário do Auth tenha perfil (ex.: contas criadas antes dos scripts)
+insert into public.perfis (id, nome)
+select id, coalesce(nullif(trim(raw_user_meta_data ->> 'nome'), ''), split_part(email, '@', 1))
+from auth.users
+on conflict (id) do nothing;
+
 update public.perfis p set email = u.email from auth.users u where u.id = p.id and p.email is distinct from u.email;
 
 -- O perfil passa a guardar também o e-mail (para a lista da equipe)

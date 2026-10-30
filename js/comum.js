@@ -31,17 +31,29 @@ function mensagemErro(erro) {
 // ----- Autenticação -----
 // Devolve { id, nome, perfil, admin, mestre } do usuário logado, ou null
 async function sessao() {
+  sessao.erro = null;
   const { data: { session } } = await sb.auth.getSession();
   if (!session) return null;
-  const { data, error } = await sb.from('perfis').select('id, nome, perfil, admin, mestre').eq('id', session.user.id).single();
-  if (error || !data) return null;
-  return data;
+  const buscar = campos => sb.from('perfis').select(campos).eq('id', session.user.id).maybeSingle();
+  let { data, error } = await buscar('id, nome, perfil, admin, mestre');
+  if (error && /admin|mestre|column/i.test(error.message)) {
+    // Banco sem a migração 02 (colunas admin/mestre): entra mesmo assim, sem recursos de administrador
+    console.warn('Rode supabase/02-contas-e-visao-geral.sql no Supabase para ativar Equipe e Visão geral.', error);
+    ({ data, error } = await buscar('id, nome, perfil'));
+  }
+  if (error) { console.error('Erro ao ler o perfil:', error); sessao.erro = error; return null; }
+  if (!data) return null;
+  return { admin: false, mestre: false, ...data };
 }
 async function entrar(email, senha, perfil) {
   const { error } = await sb.auth.signInWithPassword({ email: email.trim().toLowerCase(), password: senha });
   if (error) return { erro: mensagemErro(error) };
   const u = await sessao();
-  if (!u) { await sb.auth.signOut(); return { erro: 'Perfil não encontrado. Verifique se o banco foi configurado.' }; }
+  if (!u) {
+    await sb.auth.signOut();
+    return { erro: sessao.erro ? 'Erro ao ler o perfil: ' + mensagemErro(sessao.erro)
+      : 'Esta conta não tem perfil no banco. Rode novamente os scripts da pasta supabase/ (02 e 03).' };
+  }
   if (u.perfil !== perfil) {
     await sb.auth.signOut();
     return { erro: perfil === 'prefeitura' ? 'Esta conta não tem acesso da prefeitura.' : 'Esta é uma conta da prefeitura: use a aba "Prefeitura".' };
