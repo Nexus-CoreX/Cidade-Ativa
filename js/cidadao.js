@@ -116,10 +116,14 @@
   $('btn-ia').onclick = async () => {
     const d = $('descricao').value.trim();
     if (!d) { $('ia-status').textContent = 'Escreva a descrição primeiro.'; return; }
-    $('ia-status').textContent = 'Analisando...';
-    const cat = await classificarProblema(d, foto && foto.blob);
-    $('categoria').value = cat;
-    $('ia-status').textContent = `Sugestão da IA: ${CATEGORIAS[cat]} (você pode alterar).`;
+    const btn = $('btn-ia'); btn.disabled = true;
+    $('ia-status').textContent = foto ? 'Analisando a foto e a descrição...' : 'Analisando a descrição...';
+    const r = await classificarProblema(d, foto && foto.blob);
+    btn.disabled = false;
+    $('categoria').value = r.categoria;
+    $('ia-status').textContent = r.origem === 'ia'
+      ? `Sugestão da IA: ${CATEGORIAS[r.categoria]}${r.confianca === 'baixa' ? ' (pouca certeza)' : ''}${r.motivo ? ' — ' + r.motivo : ''}. Você pode alterar.`
+      : `IA indisponível (${r.aviso}). Sugestão por palavras-chave: ${CATEGORIAS[r.categoria]}. Você pode alterar.`;
   };
 
   $('form').onsubmit = async e => {

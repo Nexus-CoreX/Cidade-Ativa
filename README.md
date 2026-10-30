@@ -45,6 +45,14 @@ Os dados são armazenados no banco de dados, possibilitando a consulta e o geren
 
 O usuário pode informar a categoria, a descrição e a localização do problema. Após o envio, os dados são armazenados na tabela `ocorrencias` do Supabase.
 
+### Classificação com inteligência artificial
+
+Ao registrar uma ocorrência, o botão **Sugerir categoria com IA** envia a descrição e a foto para a Edge Function
+`classificar` do Supabase, que consulta um modelo de IA (Google Gemini por padrão) e devolve a categoria sugerida com uma
+justificativa curta. A chave da IA fica guardada como segredo no Supabase, nunca no navegador. Cada usuário pode pedir até
+20 sugestões por hora. Se a IA estiver indisponível, o site sugere a categoria por palavras-chave, e o cidadão sempre pode
+alterar a escolha.
+
 ### Visão geral (cidadão)
 
 Na aba **Visão geral**, o cidadão vê todas as ocorrências da cidade, agrupadas por status (Recebida, Em análise, Em andamento e Resolvida),
@@ -120,6 +128,8 @@ Leaflet + OpenStreetMap: mapa das ocorrências e busca de endereços.
 
 Chart.js: gráficos do painel da prefeitura.
 
+Google Gemini (via Supabase Edge Functions): sugestão automática de categoria a partir da descrição e da foto.
+
 
 ## 📈 Relatórios e indicadores
 
@@ -148,6 +158,7 @@ Esses recursos ajudam a organizar as informações e podem contribuir para a ide
       **Atenção:** apaga os dados existentes; rode só na primeira instalação.
    2. [`02-contas-e-visao-geral.sql`](supabase/02-contas-e-visao-geral.sql): administradores, conta mestre e visão geral. Não apaga dados.
    3. [`03-conta-mestre.sql`](supabase/03-conta-mestre.sql): **troque o e-mail e a senha** antes de rodar. Cria a conta mestre da prefeitura.
+   4. [`04-ia.sql`](supabase/04-ia.sql): limite de uso da IA (20 sugestões por usuário por hora).
 3. Em **Authentication → Sign In / Providers → Email**, decida sobre **Confirm email**:
    - ligado: o cidadão precisa clicar no link enviado por e-mail antes de entrar;
    - desligado: a conta pode ser usada na hora (mais prático para testes e apresentação).
@@ -164,7 +175,20 @@ Essa chave pode ficar no código; a proteção dos dados é feita pelas regras R
 Abra a pasta no VS Code, clique com o botão direito em `index.html` → **Open with Live Server**.
 (Abrir o arquivo com duplo clique não funciona bem: o login e o GPS precisam de um endereço `http://`.)
 
-### 4. Contas da prefeitura
+### 4. Ativar a IA (Edge Function)
+
+1. Crie uma chave do Gemini em [Google AI Studio](https://aistudio.google.com/apikey) (**Get API key**).
+   Os limites gratuitos aparecem no próprio AI Studio e mudam com o tempo.
+2. No Supabase, abra **Edge Functions → Deploy a new function → Via Editor**.
+3. Dê o nome **`classificar`** (exatamente assim), apague o código de exemplo, cole o conteúdo de
+   [`supabase/functions/classificar/index.ts`](supabase/functions/classificar/index.ts) e clique em **Deploy**.
+4. Em **Edge Functions → Secrets**, adicione `GEMINI_API_KEY` com a sua chave.
+5. No site, abra **Nova ocorrência**, escreva uma descrição (e, se quiser, adicione uma foto) e clique em **Sugerir categoria com IA**.
+
+Para usar outro provedor, adicione também os segredos `IA_PROVEDOR` (`openai` ou `anthropic`), `IA_MODELO` (o nome do modelo)
+e a chave correspondente (`OPENAI_API_KEY` ou `ANTHROPIC_API_KEY`). Os erros da função aparecem em **Edge Functions → classificar → Logs**.
+
+### 5. Contas da prefeitura
 
 Todo cadastro feito pela tela inicial é de **cidadão**. Para a prefeitura:
 
@@ -199,7 +223,9 @@ Cidade-Ativa/
 ├── supabase/
 │   ├── 01-estrutura.sql            # Tabelas, segurança e fotos
 │   ├── 02-contas-e-visao-geral.sql # Administradores e visão geral
-│   └── 03-conta-mestre.sql         # Criação da conta mestre
+│   ├── 03-conta-mestre.sql         # Criação da conta mestre
+│   ├── 04-ia.sql                   # Limite de uso da IA
+│   └── functions/classificar/      # Edge Function que consulta a IA
 ├── README.md       # Documentação do projeto
 ├── cidadao.html    # Interface destinada aos cidadãos
 ├── index.html      # Página inicial da aplicação
