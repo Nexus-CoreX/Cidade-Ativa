@@ -9,7 +9,7 @@
 <body class="pref">
   <header class="topo">
     <h1>Painel da Prefeitura</h1>
-    <div class="usuario"><span><b id="nome-usuario"></b></span><button id="btn-sair" class="btn-ghost">Sair</button></div>
+    <div class="usuario"><span><b id="nome-usuario"></b> <small id="papel" class="papel"></small></span><button id="btn-equipe" class="btn-ghost" hidden>Equipe</button><button id="btn-sair" class="btn-ghost">Sair</button></div>
   </header>
   <main class="largo">
     <div class="kpis" id="kpis"></div>
@@ -20,14 +20,42 @@
         <div class="filtros">
           <input id="busca" type="search" placeholder="Buscar na descrição ou autor...">
           <select id="f-cat"><option value="">Todas as categorias</option></select>
+          <button type="button" id="btn-csv" class="btn-sec" title="Baixa as ocorrências filtradas em CSV">Exportar CSV</button>
         </div>
         <div id="lista" class="rolagem"></div>
       </div>
     </div>
+    <section class="indicadores">
+      <div class="barra"><h2>Indicadores</h2><span class="dica" id="g-legenda">Conforme os filtros aplicados</span></div>
+      <div class="graficos">
+        <div class="card"><h3>Por status</h3><div class="grafico"><canvas id="g-status" aria-label="Ocorrências por status" role="img"></canvas></div></div>
+        <div class="card"><h3>Por categoria</h3><div class="grafico"><canvas id="g-cat" aria-label="Ocorrências por categoria" role="img"></canvas></div></div>
+        <div class="card"><h3>Por mês (últimos 6)</h3><div class="grafico"><canvas id="g-mes" aria-label="Ocorrências por mês" role="img"></canvas></div></div>
+      </div>
+    </section>
   </main>
   <dialog id="dlg"><div id="det" class="modal"></div></dialog>
+  <dialog id="dlg-equipe" class="largo">
+    <div class="modal">
+      <div class="barra" style="margin-top:0"><h2>Equipe da prefeitura</h2><button type="button" class="btn-sec" id="eq-fechar">Fechar</button></div>
+      <form id="form-equipe" class="form-equipe">
+        <h3>Cadastrar nova conta da prefeitura</h3>
+        <label>Nome<input id="eq-nome" required autocomplete="off"></label>
+        <label>E-mail<input id="eq-email" type="email" required autocomplete="off"></label>
+        <label>Senha inicial<input id="eq-senha" type="password" required minlength="6" autocomplete="new-password"></label>
+        <label class="check"><input type="checkbox" id="eq-admin"> Administrador <small>(pode cadastrar contas e definir admins)</small></label>
+        <p id="eq-erro" class="erro" role="alert"></p>
+        <div class="acoes"><button class="btn" id="eq-criar">Cadastrar conta</button></div>
+      </form>
+      <h3>Contas cadastradas</h3>
+      <div id="eq-lista"></div>
+    </div>
+  </dialog>
   <div id="toast" class="toast"></div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
   <script src="js/comum.js"></script>
   <script src="js/prefeitura.js"></script>
 </body>

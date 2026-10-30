@@ -45,6 +45,19 @@ Os dados são armazenados no banco de dados, possibilitando a consulta e o geren
 
 O usuário pode informar a categoria, a descrição e a localização do problema. Após o envio, os dados são armazenados na tabela `ocorrencias` do Supabase.
 
+### Classificação com inteligência artificial
+
+Ao registrar uma ocorrência, o botão **Sugerir categoria com IA** envia a descrição e a foto para a Edge Function
+`classificar` do Supabase, que consulta um modelo de IA (Google Gemini por padrão) e devolve a categoria sugerida com uma
+justificativa curta. A chave da IA fica guardada como segredo no Supabase, nunca no navegador. Cada usuário pode pedir até
+20 sugestões por hora. Se a IA estiver indisponível, o site sugere a categoria por palavras-chave, e o cidadão sempre pode
+alterar a escolha.
+
+### Visão geral (cidadão)
+
+Na aba **Visão geral**, o cidadão vê todas as ocorrências da cidade, agrupadas por status (Recebida, Em análise, Em andamento e Resolvida),
+com busca por nome de quem registrou, endereço ou descrição (sem diferenciar acentos e maiúsculas). As ocorrências do próprio usuário aparecem marcadas como **Sua**.
+
 ### Visualização no mapa
 
 A aplicação permite trabalhar com a localização geográfica das ocorrências, facilitando a identificação dos locais que precisam de atenção.
@@ -59,7 +72,18 @@ O projeto conta com desenvolvimento de recursos administrativos para consultar e
 - Indicadores e gráficos estatísticos.
 - Exportação dos dados em CSV.
 
-**Observação:** a disponibilidade dessas funcionalidades depende dos arquivos e da versão efetivamente publicados no repositório.
+### Contas da prefeitura e administradores
+
+Não existe cadastro público de prefeitura. A **conta mestre** (criada pelo script `03-conta-mestre.sql`) e os demais **administradores**
+usam o botão **Equipe**, no topo do painel, para:
+
+- cadastrar novas contas da prefeitura, definindo se cada uma é administradora;
+- dar ou tirar o acesso de administrador;
+- remover o acesso da prefeitura (a conta continua existindo como cidadão).
+
+Ninguém altera o próprio acesso, e a conta mestre não pode ser alterada pelo site.
+
+Os gráficos e a exportação CSV respeitam os filtros aplicados (status, categoria e busca). O arquivo CSV usa `;` como separador e abre direto no Excel em português.
 
 ## 🔄 Fluxo da aplicação
 
@@ -98,6 +122,14 @@ CSS3: utilizado para a estilização das páginas, cores, layouts e responsivida
 
 JavaScript: responsável pelas funcionalidades, interações e manipulação dos dados da aplicação.
 
+Supabase: banco de dados PostgreSQL, autenticação de usuários e armazenamento das fotos.
+
+Leaflet + OpenStreetMap: mapa das ocorrências e busca de endereços.
+
+Chart.js: gráficos do painel da prefeitura.
+
+Google Gemini (via Supabase Edge Functions): sugestão automática de categoria a partir da descrição e da foto.
+
 
 ## 📈 Relatórios e indicadores
 
@@ -115,12 +147,66 @@ Esses recursos ajudam a organizar as informações e podem contribuir para a ide
 ### Pré-requisitos
 
 - Navegador atualizado, como Google Chrome ou Microsoft Edge.
-- Acesso aos arquivos do projeto.
-- Configuração do projeto no Supabase para utilizar os recursos que dependem do banco de dados.
+- Um projeto no [Supabase](https://supabase.com) (o plano gratuito é suficiente).
+- [VS Code](https://code.visualstudio.com/) com a extensão **Live Server** (ou outro servidor local).
 
-> 🚧 **Em desenvolvimento**
+### 1. Configurar o banco de dados (uma única vez)
 
-As instruções de instalação e execução serão adicionadas após a definição da stack tecnológica.
+1. No painel do Supabase, abra **SQL Editor → New query**.
+2. Rode os scripts da pasta `supabase/`, **nesta ordem** (cole o conteúdo de cada um e clique em **Run**):
+   1. [`01-estrutura.sql`](supabase/01-estrutura.sql): cria as tabelas `perfis`, `ocorrencias` e `historico`, as regras de segurança (RLS) e o bucket `fotos`.
+      **Atenção:** apaga os dados existentes; rode só na primeira instalação.
+   2. [`02-contas-e-visao-geral.sql`](supabase/02-contas-e-visao-geral.sql): administradores, conta mestre e visão geral. Não apaga dados.
+   3. [`03-conta-mestre.sql`](supabase/03-conta-mestre.sql): **troque o e-mail e a senha** antes de rodar. Cria a conta mestre da prefeitura.
+   4. [`04-ia.sql`](supabase/04-ia.sql): limite de uso da IA (20 sugestões por usuário por hora).
+3. Em **Authentication → Sign In / Providers → Email**, decida sobre **Confirm email**:
+   - ligado: o cidadão precisa clicar no link enviado por e-mail antes de entrar;
+   - desligado: a conta pode ser usada na hora (mais prático para testes e apresentação).
+4. Em **Authentication → URL Configuration**, coloque em **Site URL** o endereço onde o site roda (ex.: `http://127.0.0.1:5500`).
+
+### 2. Ligar o site ao Supabase
+
+O arquivo [`js/config.js`](js/config.js) guarda a **Project URL** e a **publishable key** (em *Project Settings → API Keys*).
+Essa chave pode ficar no código; a proteção dos dados é feita pelas regras RLS.
+**Nunca** coloque a chave `secret`/`service_role` no projeto.
+
+### 3. Executar
+
+Abra a pasta no VS Code, clique com o botão direito em `index.html` → **Open with Live Server**.
+(Abrir o arquivo com duplo clique não funciona bem: o login e o GPS precisam de um endereço `http://`.)
+
+### 4. Ativar a IA (Edge Function)
+
+1. Crie uma chave do Gemini em [Google AI Studio](https://aistudio.google.com/apikey) (**Get API key**).
+   Os limites gratuitos aparecem no próprio AI Studio e mudam com o tempo.
+2. No Supabase, abra **Edge Functions → Deploy a new function → Via Editor**.
+3. Dê o nome **`classificar`** (exatamente assim), apague o código de exemplo, cole o conteúdo de
+   [`supabase/functions/classificar/index.ts`](supabase/functions/classificar/index.ts) e clique em **Deploy**.
+4. Em **Edge Functions → Secrets**, adicione `GEMINI_API_KEY` com a sua chave.
+5. No site, abra **Nova ocorrência**, escreva uma descrição (e, se quiser, adicione uma foto) e clique em **Sugerir categoria com IA**.
+
+Para usar outro provedor, adicione também os segredos `IA_PROVEDOR` (`openai` ou `anthropic`), `IA_MODELO` (o nome do modelo)
+e a chave correspondente (`OPENAI_API_KEY` ou `ANTHROPIC_API_KEY`). Os erros da função aparecem em **Edge Functions → classificar → Logs**.
+
+### 5. Contas da prefeitura
+
+Todo cadastro feito pela tela inicial é de **cidadão**. Para a prefeitura:
+
+1. Entre pela aba **Prefeitura** com a conta mestre (e-mail e senha definidos no `03-conta-mestre.sql`).
+2. Clique em **Equipe** e cadastre as contas da equipe, marcando **Administrador** para quem também poderá cadastrar contas.
+3. Cada pessoa entra pela aba **Prefeitura** com o e-mail e a senha inicial cadastrados.
+
+### 🗄️ Estrutura do banco
+
+| Tabela        | Conteúdo                                                                 |
+| ------------- | ------------------------------------------------------------------------ |
+| `perfis`      | Nome, e-mail e tipo de cada usuário (`cidadao` ou `prefeitura`), além de `admin` e `mestre` |
+| `ocorrencias` | Categoria, descrição, status, endereço, latitude/longitude e link da foto |
+| `historico`   | Linha do tempo de cada ocorrência (status, mensagem, responsável, data)  |
+
+As fotos ficam no bucket `fotos` do Supabase Storage. Pelas regras de segurança, todo usuário logado pode ver as ocorrências
+(visão geral), cada cidadão só registra em seu próprio nome, somente a prefeitura altera o status (função `atualizar_status`)
+e somente administradores gerenciam a equipe (`criar_conta_prefeitura`, `definir_admin`, `remover_acesso_prefeitura`).
 
 ---
 
@@ -134,6 +220,12 @@ Cidade-Ativa/
 │   └── workflows/  # Configurações de automação do GitHub
 ├── css/            # Arquivos de estilização (CSS)
 ├── js/             # Arquivos de funcionalidades (JavaScript)
+├── supabase/
+│   ├── 01-estrutura.sql            # Tabelas, segurança e fotos
+│   ├── 02-contas-e-visao-geral.sql # Administradores e visão geral
+│   ├── 03-conta-mestre.sql         # Criação da conta mestre
+│   ├── 04-ia.sql                   # Limite de uso da IA
+│   └── functions/classificar/      # Edge Function que consulta a IA
 ├── README.md       # Documentação do projeto
 ├── cidadao.html    # Interface destinada aos cidadãos
 ├── index.html      # Página inicial da aplicação
@@ -144,7 +236,8 @@ Cidade-Ativa/
 
 - **`.github/workflows/`:** armazena arquivos de configuração para automações do GitHub Actions.
 - **`css/`:** reúne os arquivos CSS responsáveis pela aparência visual, cores, layouts e responsividade das páginas.
-- **`js/`:** contém os arquivos JavaScript responsáveis pelas interações e funcionalidades da aplicação.
+- **`js/`:** contém os arquivos JavaScript responsáveis pelas interações e funcionalidades da aplicação. O `config.js` guarda a conexão com o Supabase e o `comum.js` concentra o acesso ao banco.
+- **`supabase/`:** scripts SQL do banco, para rodar em ordem no SQL Editor do Supabase (estrutura, contas/visão geral e conta mestre).
 - **`README.md`:** apresenta a descrição do projeto, seus objetivos, as tecnologias utilizadas e a organização dos códigos.
 - **`cidadao.html`:** página destinada aos cidadãos, para acesso às funcionalidades relacionadas ao registro e à consulta de ocorrências.
 - **`index.html`:** página inicial da aplicação, utilizada como ponto de entrada para a navegação.

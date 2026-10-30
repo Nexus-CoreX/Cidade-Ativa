@@ -1,19 +1,57 @@
 (async () => {
-  await iniciarDados();
-  const s = exigirPerfil('cidadao'); if (!s) return;
-  let foto = '', pos = null, endereco = '';
+  const s = await exigirPerfil('cidadao'); if (!s) return;
+  let foto = null, pos = null, endereco = '', minhas = [], todas = null, aba = 'minhas';
 
   for (const [k, v] of Object.entries(CATEGORIAS)) $('categoria').add(new Option(v, k));
-  const minhas = () => ler(K.occ, []).filter(o => o.userId === s.id).sort((a, b) => b.data.localeCompare(a.data));
 
+  async function carregar() {
+    minhas = await listarOcorrencias(s.id); render();
+    if (aba === 'geral') carregarGeral(); else todas = null;   // a visão geral recarrega quando for aberta
+  }
+
+  // ----- Abas: Minhas ocorrências / Visão geral -----
+  function trocarAba(a) {
+    aba = a;
+    for (const [id, nome] of [['tab-minhas', 'minhas'], ['tab-geral', 'geral']]) {
+      $(id).classList.toggle('on', a === nome); $(id).setAttribute('aria-selected', a === nome);
+    }
+    $('aba-minhas').hidden = a !== 'minhas'; $('aba-geral').hidden = a !== 'geral';
+    if (a === 'geral' && !todas) carregarGeral();
+  }
+  $('tab-minhas').onclick = () => trocarAba('minhas');
+  $('tab-geral').onclick = () => trocarAba('geral');
+
+  async function carregarGeral() {
+    $('g-grupos').innerHTML = '<p class="dica">Carregando...</p>';
+    todas = await listarOcorrencias(); renderGeral();
+  }
+  const semAcento = txt => String(txt || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  function renderGeral() {
+    if (!todas) return;
+    const q = semAcento($('g-busca').value.trim());
+    const lista = todas.filter(o => !q || semAcento([o.autor, o.endereco, o.descricao, CATEGORIAS[o.categoria]].join(' ')).includes(q));
+    $('g-total').textContent = q ? `${lista.length} de ${todas.length} ocorrências` : `${todas.length} ocorrências`;
+    $('g-grupos').innerHTML = STATUS.map(st => {
+      const doStatus = lista.filter(o => o.status === st);
+      return `<details class="grupo" ${doStatus.length ? 'open' : ''}>
+        <summary>${selo(st)}<span class="conta">${doStatus.length}</span></summary>
+        <div class="itens">${doStatus.map(o => `<div class="item">${fotoHTML(o)}<div class="info">
+          <b>${esc(CATEGORIAS[o.categoria])}</b>${o.user_id === s.id ? '<span class="tag sua">Sua</span>' : ''}<br>${esc(o.descricao)}<br>
+          <small>📍 ${esc(enderecoTexto(o))}<br>${esc(o.autor)} · ${dataBR(o.criado_em)}</small>
+          <details><summary>Ver andamento</summary>${tempoHTML(o)}</details></div></div>`).join('')
+          || `<p class="dica">${q ? 'Nenhum resultado para a busca.' : 'Nenhuma ocorrência neste status.'}</p>`}</div>
+      </details>`;
+    }).join('');
+  }
+  $('g-busca').oninput = renderGeral;
   function render() {
-    const m = minhas();
+    const m = minhas;
     $('k-total').textContent = m.length;
     $('k-and').textContent = m.filter(o => o.status === 'Em análise' || o.status === 'Em andamento').length;
     $('k-res').textContent = m.filter(o => o.status === 'Resolvida').length;
     $('lista').innerHTML = m.map(o => `<div class="item">${fotoHTML(o)}<div class="info">
       <b>${esc(CATEGORIAS[o.categoria])}</b> ${selo(o.status)}<br>${esc(o.descricao)}<br>
-      <small>📍 ${esc(enderecoTexto(o))}<br>${dataBR(o.data)}</small>
+      <small>📍 ${esc(enderecoTexto(o))}<br>${dataBR(o.criado_em)}</small>
       <details><summary>Acompanhar andamento</summary>${tempoHTML(o)}</details></div></div>`).join('')
       || '<div class="card vazio">Você ainda não registrou nenhuma ocorrência.<br>Clique em “Nova ocorrência” para começar.</div>';
   }
@@ -24,8 +62,11 @@
 
   $('foto').onchange = async e => {
     if (!e.target.files[0]) return;
-    foto = await reduzirFoto(e.target.files[0]);
-    $('preview').src = foto; $('preview').hidden = false;
+    try {
+      if (foto) URL.revokeObjectURL(foto.url);
+      foto = await reduzirFoto(e.target.files[0]);
+      $('preview').src = foto.url; $('preview').hidden = false;
+    } catch (err) { foto = null; e.target.value = ''; toast(err.message); }
   };
 
   // ----- Localização: GPS ou endereço digitado -----
@@ -75,22 +116,31 @@
   $('btn-ia').onclick = async () => {
     const d = $('descricao').value.trim();
     if (!d) { $('ia-status').textContent = 'Escreva a descrição primeiro.'; return; }
-    $('ia-status').textContent = 'Analisando...';
-    const cat = await classificarProblema(d, foto);
-    $('categoria').value = cat;
-    $('ia-status').textContent = `Sugestão da IA: ${CATEGORIAS[cat]} (você pode alterar).`;
+    const btn = $('btn-ia'); btn.disabled = true;
+    $('ia-status').textContent = foto ? 'Analisando a foto e a descrição...' : 'Analisando a descrição...';
+    const r = await classificarProblema(d, foto && foto.blob);
+    btn.disabled = false;
+    $('categoria').value = r.categoria;
+    $('ia-status').textContent = r.origem === 'ia'
+      ? `Sugestão da IA: ${CATEGORIAS[r.categoria]}${r.confianca === 'baixa' ? ' (pouca certeza)' : ''}${r.motivo ? ' — ' + r.motivo : ''}. Você pode alterar.`
+      : `IA indisponível (${r.aviso}). Sugestão por palavras-chave: ${CATEGORIAS[r.categoria]}. Você pode alterar.`;
   };
 
-  $('form').onsubmit = e => {
+  $('form').onsubmit = async e => {
     e.preventDefault();
     if (!pos) { toast('Defina a localização: use o GPS ou digite e escolha um endereço.'); return; }
-    const lista = ler(K.occ, []);
-    lista.push({ id: Date.now(), userId: s.id, autor: s.nome, descricao: $('descricao').value.trim(), categoria: $('categoria').value,
-      status: 'Recebida', endereco, lat: pos.lat, lng: pos.lng, foto, data: new Date().toISOString(),
-      historico: [{ data: new Date().toISOString(), status: 'Recebida', nota: 'Ocorrência registrada.', por: 'Sistema' }] });
-    if (!gravar(K.occ, lista)) return;
-    e.target.reset(); $('preview').hidden = true; foto = ''; modo('gps'); $('ia-status').textContent = '';
-    dlg.close(); render(); toast('Ocorrência enviada à prefeitura!');
+    const btn = $('btn-enviar'); btn.disabled = true; btn.textContent = 'Enviando...';
+    try {
+      await criarOcorrencia(s.id, { descricao: $('descricao').value.trim(), categoria: $('categoria').value,
+        endereco: endereco || null, lat: pos.lat, lng: pos.lng }, foto && foto.blob);
+    } catch (err) {
+      toast('Não foi possível enviar: ' + mensagemErro(err)); return;
+    } finally { btn.disabled = false; btn.textContent = 'Enviar'; }
+    e.target.reset(); $('preview').hidden = true;
+    if (foto) URL.revokeObjectURL(foto.url); foto = null;
+    modo('gps'); $('ia-status').textContent = '';
+    dlg.close(); toast('Ocorrência enviada à prefeitura!');
+    carregar();
   };
-  render();
+  carregar();
 })();
