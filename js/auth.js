@@ -1,6 +1,5 @@
 (async () => {
-  await iniciarDados();
-  const s = sessao();
+  const s = await sessao();
   if (s) { location.replace(s.perfil === 'prefeitura' ? 'prefeitura.html' : 'cidadao.html'); return; }
   let perfil = 'cidadao', cadastro = false;
 
@@ -11,6 +10,7 @@
     $('enviar').textContent = cadastro ? 'Criar conta' : 'Entrar';
     $('troca').hidden = perfil === 'prefeitura';
     $('alternar').textContent = cadastro ? 'Já tenho conta' : 'Criar conta';
+    $('senha').autocomplete = cadastro ? 'new-password' : 'current-password';
     $('erro').textContent = '';
   }
   document.querySelectorAll('.seg button').forEach(b => b.onclick = () => { perfil = b.dataset.perfil; cadastro = false; ui(); });
@@ -18,13 +18,24 @@
 
   $('form').onsubmit = async e => {
     e.preventDefault();
-    if (cadastro) {
-      const erro = await cadastrar($('nome').value, $('email').value, $('senha').value);
-      if (erro) { $('erro').textContent = erro; return; }
+    const btn = $('enviar'), texto = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Aguarde...'; $('erro').textContent = '';
+    try {
+      if (cadastro) {
+        const r = await cadastrar($('nome').value, $('email').value, $('senha').value);
+        if (r.erro) { $('erro').textContent = r.erro; return; }
+        if (r.confirmar) {
+          cadastro = false; ui();
+          toast('Conta criada! Confirme pelo link enviado ao seu e-mail e depois entre.');
+          return;
+        }
+      }
+      const r = await entrar($('email').value, $('senha').value, perfil);
+      if (r.erro) { $('erro').textContent = r.erro; return; }
+      location.href = perfil === 'prefeitura' ? 'prefeitura.html' : 'cidadao.html';
+    } finally {
+      btn.disabled = false; if (btn.textContent === 'Aguarde...') btn.textContent = texto;
     }
-    const u = await entrar($('email').value, $('senha').value, perfil);
-    if (!u) { $('erro').textContent = 'E-mail ou senha incorretos para este perfil.'; return; }
-    location.href = perfil === 'prefeitura' ? 'prefeitura.html' : 'cidadao.html';
   };
   ui();
 })();

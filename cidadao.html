@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Cidade Ativa · Minhas ocorrências</title>
+  <title>Cidade Ativa · Cidadão</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -11,13 +11,26 @@
     <div class="usuario"><span>Olá, <b id="nome-usuario"></b></span><button id="btn-sair" class="btn-ghost">Sair</button></div>
   </header>
   <main>
-    <div class="kpis">
-      <div class="kpi"><b id="k-total">0</b><span>Registradas</span></div>
-      <div class="kpi"><b id="k-and">0</b><span>Em tratamento</span></div>
-      <div class="kpi"><b id="k-res">0</b><span>Resolvidas</span></div>
+    <div class="seg abas" role="tablist">
+      <button type="button" class="on" id="tab-minhas" role="tab" aria-selected="true">Minhas ocorrências</button>
+      <button type="button" id="tab-geral" role="tab" aria-selected="false">Visão geral</button>
     </div>
-    <div class="barra"><h2>Minhas ocorrências</h2><button id="btn-nova" class="btn">+ Nova ocorrência</button></div>
-    <div id="lista"></div>
+
+    <section id="aba-minhas">
+      <div class="kpis">
+        <div class="kpi"><b id="k-total">0</b><span>Registradas</span></div>
+        <div class="kpi"><b id="k-and">0</b><span>Em tratamento</span></div>
+        <div class="kpi"><b id="k-res">0</b><span>Resolvidas</span></div>
+      </div>
+      <div class="barra"><h2>Minhas ocorrências</h2><button id="btn-nova" class="btn">+ Nova ocorrência</button></div>
+      <div id="lista"></div>
+    </section>
+
+    <section id="aba-geral" hidden>
+      <div class="barra"><h2>Todas as ocorrências da cidade</h2><span class="dica" id="g-total"></span></div>
+      <input id="g-busca" type="search" placeholder="Buscar por nome, endereço ou descrição..." aria-label="Buscar ocorrências">
+      <div id="g-grupos"></div>
+    </section>
   </main>
 
   <dialog id="dlg">
@@ -42,10 +55,12 @@
       <label>Categoria<select id="categoria"></select></label>
       <button type="button" id="btn-ia" class="btn-sec">Sugerir categoria com IA</button>
       <p id="ia-status" class="dica"></p>
-      <div class="acoes"><button type="button" id="btn-cancelar" class="btn-sec">Cancelar</button><button class="btn">Enviar</button></div>
+      <div class="acoes"><button type="button" id="btn-cancelar" class="btn-sec">Cancelar</button><button class="btn" id="btn-enviar">Enviar</button></div>
     </form>
   </dialog>
   <div id="toast" class="toast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
   <script src="js/comum.js"></script>
   <script src="js/ia.js"></script>
   <script src="js/geo.js"></script>
